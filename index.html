@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brandge - Conecte-se com sua nova identidade</title>
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/index.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <svg width="120" height="32" viewBox="0 0 120 32">
+                    <text x="0" y="24" font-size="24" font-weight="bold">
+                        Brandge_
+                    </text>
+                </svg>
+            </div>
+
+            <div class="nav-links">
+                <button onclick="scrollToSection('sobre-nos')">Sobre nós</button>
+                <a href="login.html">Parceiros</a>
+                <button  class="login-btn"> Entrar / Cadastrar</button>
+            </div>
+
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" id="mobile-menu-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="menu-icon">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="close-icon" style="display: none;">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </nav>
+
+        <div class="mobile-menu" id="mobile-menu" style="display: none;">
+            <div class="mobile-menu-content">
+                <button onclick="scrollToSection('sobre-nos'); toggleMobileMenu()">Sobre nós</button>
+                <a href="#">Parceiros</a>
+                <button class="login-btn">Entrar / Cadastrar</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="section-grid">
+                <div class="hero-content">
+                    <h1>Conecte-se com sua nova identidade.</h1>
+                    <p>Sem dor de cabeça. Conectamos estúdios de design validados a clientes que buscam resultados reais.</p>
+                    <button class="cta-btn">Comece por aqui →</button>
+                </div>
+
+                <div class="carousel">
+                    <div class="carousel-container">
+                        <div class="carousel-card">
+                            <img class="card-image" src="/assets/img/CARD_5.png" alt="" >
+                            <h3 class="card-title">Projeto 1</h3>
+                        
+                        </div>
+                        
+                        <div class="carousel-card">
+                            <img class="card-image" src="/assets/img/CARD_2.png" alt="" >
+                            <h3 class="card-title">Projeto 2</h3>
+                         
+                        </div>
+                        
+                        <div class="carousel-card">
+                            <img class="card-image" src="/assets/img/CARD_4.png" alt="" >
+                            <h3 class="card-title">Projeto 3</h3>
+                           
+                        </div>
+                        
+                        <div class="carousel-card">
+                            <img class="card-image" src="/assets/img/CARD_1.png" alt="" >
+                            <h3 class="card-title">Projeto 4</h3>
+                           
+                        </div>
+                        
+                        <div class="carousel-card">
+                            <img class="card-image" src="/assets/img/CARD_2.png" alt="" >
+                            <h3 class="card-title">Projeto 5</h3>
+                           
+                        </div>
+                        
+                        <div class="carousel-card">
+                           <img class="card-image" src="/assets/img/CARD_3.png" alt="" >
+                           <h3 class="card-title">Projeto 6</h3>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="sobre-nos" class="about">
+        <div class="container">
+            <div class="section-grid">
+                <img src="/assets/img/GLASS_DOOR.png" class="door-container">
+                <div class="about-content">
+                    <h2>Mais do que uma porta de entrada:</h2>
+                    <p>Somos a ponte entre projetos ambiciosos e profissionais criativos capazes de realizá-los.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Professionals Section -->
+    <section class="professionals">
+        <div class="container">
+            <div class="section-grid">
+                <div class="professionals-content">
+                    <h2>Profissionais lapidados e transparência</h2>
+                    <p>Os profissionais afiliados à nossa plataforma passaram por um refinado processo de curadoria. Valorizamos a clareza, a experiência e a simplicidade.</p>
+                    <button class="cta-btn">Conheça nossa curadoria →</button>
+                </div>
+
+                <img src="/assets/img/CRYSTAL.png" class="object-container" alt="">
+                
+            </div>
+        </div>
+    </section>
+
+    <script src="assets/js/main.js"></script>
+     <script src="/assets/js/header.js"></script>
+</body>
+</html>
+

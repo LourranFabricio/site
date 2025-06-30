@@ -1,0 +1,243 @@
+
+/* Sections */
+section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.section-grid {
+    display: grid;
+    grid-template-columns: 56.66% 43.33%;
+    gap: 3rem;
+    align-items: center;
+}
+
+/* Hero Section */
+.hero {
+    background: #f8f8f8;
+    padding-top: 5rem;
+}
+
+.hero-content h1 {
+    font-size: 3.75rem;
+    font-weight: bold;
+    color: #181818;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+}
+
+.hero-content p {
+    font-size: 1.125rem;
+    color: #181818;
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+}
+
+.cta-btn {
+    background: #181818;
+    color: #ffffff;
+    padding: 0.75rem 2rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-size: 1.125rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    height: 3rem;
+}
+
+.cta-btn:hover {
+    background: #333333;
+}
+
+/* Carousel */
+.carousel {
+    position: relative;
+    height: 600px;
+    overflow: hidden;
+}
+
+.carousel-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 105%;
+    
+    animation: scrollUp 20s linear infinite;
+}
+
+.carousel-card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin: 0 1rem 1rem 1rem;
+    transition: transform 0.3s ease;
+}
+
+.carousel-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-image {
+    width: 100%;
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #181818;
+    margin-bottom: 0.25rem;
+}
+
+.card-subtitle {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+@keyframes scrollUp {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+}
+
+/* About Section */
+.about {
+    background: linear-gradient(to bottom, #111111, #ebe5da);
+}
+
+.door-container {
+    position: relative;
+    height: 600px;
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+
+.about-content {
+    color: white;
+}
+
+.about-content h2 {
+    font-size: 4rem;
+    font-weight: bold;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+}
+
+.about-content p {
+    font-size: 1.3rem;
+    opacity: 0.9;
+}
+
+/* Professionals Section */
+.professionals {
+    background: linear-gradient(to bottom, #111111, #ebe5da);
+}
+
+.professionals-content {
+    color: #181818;
+}
+
+.professionals-content h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+}
+
+.professionals-content p {
+    font-size: 1.125rem;
+    opacity: 0.8;
+    margin-bottom: 1.5rem;
+}
+
+.object-container {
+    position: relative;
+    height: 600px;
+    background: linear-gradient(135deg, #f97316, #a855f7);
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+
+/* Responsive Design */
+@media (max-width: 959px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .section-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .hero-content h1 {
+        font-size: 3.5rem;
+    }
+    
+    .about-content h2,
+    .professionals-content h2 {
+        font-size: 2rem;
+    }
+    
+    .carousel {
+        height: 500px;
+        order: -1;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .card-image {
+        height: 208px;
+        width: 100%;
+    }
+    
+    .door-container,
+    .object-container {
+        height: 400px;
+        order: -1;
+        margin-bottom: 2rem;
+    }
+    
+    
+}
+
+@media (min-width: 960px) {
+    .nav-links {
+        display: flex;
+    }
+    
+    .mobile-menu-btn {
+        display: none;
+    }
+    
+    .mobile-menu {
+        display: none !important;
+    }
+}
+

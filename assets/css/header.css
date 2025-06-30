@@ -1,0 +1,193 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Haas', sans-serif;
+    line-height: 1.6;
+    color: #181818;
+    min-height: 100vh;
+}
+
+@font-face {
+    font-family: 'Haas';
+    src: url('assets/fonts/NHaasGroteskDSPro-25Th.otf') format('truetype');
+    font-size: normal;
+    font-size: normal;
+}
+
+@font-face {
+    font-family: 'Haas 65';
+    src: url('NHaasGroteskTXPro-65Md.ttf') format('truetype');
+    font-size: normal;
+    font-size: normal;
+}
+
+/* Header */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+nav {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo svg {
+    color: #181818;
+  
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-left: auto;
+}
+
+.nav-links button,
+.nav-links a {
+    color: #181818;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    font-size: 1rem;
+}
+
+.nav-links button:hover,
+.nav-links a:hover {
+    opacity: 0.7;
+}
+
+.login-btn {
+    background: #181818 !important;
+    color: #ffffff !important;
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    height: 3rem;
+}
+
+.login-btn:hover {
+    background: #333333 !important;
+    opacity: 1 !important;
+}
+
+.mobile-menu-btn {
+    display: none;
+    color: #181818;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.mobile-menu {
+    display: none;
+    backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(156, 163, 175, 0.3);
+}
+
+.mobile-menu-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile-menu button,
+.mobile-menu a {
+    color: #181818;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-menu .login-btn {
+    background: #181818 !important;
+    color: #ffffff !important;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+@media (max-width: 959px) {
+    .nav-links {
+        display: none;
+    }
+    
+    .mobile-menu-btn {
+        display: block;
+    }
+    
+    .section-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .hero-content h1 {
+        font-size: 3.5rem;
+    }
+    
+    .about-content h2,
+    .professionals-content h2 {
+        font-size: 2rem;
+    }
+    
+    .carousel {
+        height: 500px;
+        order: -1;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .card-image {
+        height: 208px;
+        width: 100%;
+    }
+    
+    .door-container,
+    .object-container {
+        height: 400px;
+        order: -1;
+        margin-bottom: 2rem;
+    }
+    
+    
+}
+
+@media (min-width: 960px) {
+    .nav-links {
+        display: flex;
+    }
+    
+    .mobile-menu-btn {
+        display: none;
+    }
+    
+    .mobile-menu {
+        display: none !important;
+    }
+}
+

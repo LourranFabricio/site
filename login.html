@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brandge - Entrar / Cadastrar</title>
+    <link rel="stylesheet" href="/assets/css/login.css">
+</head>
+<body>
+    <!-- Main Grid Container -->
+    <div class="main-grid">
+        <!-- Left Grid - Background Image -->
+        <div class="left-grid">
+            <img  class="background-image" src="/assets/img/Brandge_Skin.jpg" alt="">
+            
+        </div>
+        
+        <!-- Right Grid - Form Container -->
+        <div class="right-grid">
+            <!-- Mobile Logo -->
+            <div class="mobile-logo">
+                <a href="index.html" id="mobile-logo-link">
+                    <img src="/assets/img/BRANDGE_FULL_LOGO.svg" alt="Brandge" />
+                </a>
+            </div>
+            
+            <!-- Return Arrow -->
+            <div class="return-arrow">
+                <a href="index.html" id="return-arrow-link">
+                    <img src="assets/img/arrow.svg" alt="Voltar" class="arrow" />
+                </a>
+            </div>
+            
+            <!-- Form Container -->
+            <div class="form-container">
+                <!-- Sign In Form -->
+                <div class="form-box" id="signin-form">
+                    <div class="form-content">
+                        <div class="form-group">
+                            <label for="signin-email">EMAIL</label>
+                            <input type="email" id="signin-email" name="email" placeholder="email@exemplo.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signin-password">SENHA</label>
+                            <div class="password-input-container">
+                                <input type="password" id="signin-password" name="password" placeholder="Senha" required>
+                                <button type="button" class="password-toggle" id="signin-password-toggle">
+                                    <img src="/assets/img/closed_eye.svg" alt="Mostrar senha" class="eye-icon visible-eye" />
+                                    <img src="/assets/img/visible_eye.svg" alt="Ocultar senha" class="eye-icon closed-eye" style="display: none;" />
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" />
+                                <span class="checkmark"></span>
+                                Lembre de mim
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn" id="signin-btn">ENTRAR</button>
+                        
+                        <div class="form-switch">
+                            <span class="switch-text">Não possui uma conta? </span>
+                            <button type="button" class="switch-link" id="show-signup">Cadastre-se aqui</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sign Up Form -->
+                <div class="form-box" id="signup-form" style="display: none;">
+                    <div class="form-content">
+                        <div class="form-group">
+                            <label for="signup-name">NOME COMPLETO OU NOME DA EMPRESA</label>
+                            <input type="text" id="signup-name" name="name" placeholder="Nome" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-email">EMAIL</label>
+                            <input type="email" id="signup-email" name="email" placeholder="email@exemplo.com" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-cpf">CPF OU CNPJ</label>
+                            <input type="text" id="signup-cpf" name="cpf" placeholder="000.000.000-00" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="signup-password">SENHA</label>
+                            <div class="password-input-container">
+                                <input type="password" id="signup-password" name="password" placeholder="Senha" required>
+                                <button type="button" class="password-toggle" id="signup-password-toggle">
+                                    <img src="/assets/img/closed_eye.svg" alt="Mostrar senha" class="eye-icon visible-eye" />
+                                    <img src="/assets/img/visible_eye.svg" alt="Ocultar senha" class="eye-icon closed-eye" style="display: none;" />
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn" id="signup-btn">CADASTRAR</button>
+                        
+                        <div class="form-switch">
+                            <span class="switch-text">Já possui uma conta? </span>
+                            <button type="button" class="switch-link" id="show-signin">Entre aqui</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="assets/js/login.js"></script>
+</body>
+</html>
+
