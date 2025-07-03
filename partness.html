@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brandge - Nossos Parceiros</title>
+    <link rel="stylesheet" href="assets/css/partness.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="/">
+                    <img src="assets/img/BRANDGE_FULL_LOGO.svg" alt="Brandge Logo">
+                </a>
+            </div>
+
+            <div class="nav-links">
+                <div class="search-bar">
+                    <input type="text" id="search-input-desktop" placeholder="Buscar parceiros...">
+                </div>
+                <button class="login-btn" id="auth-button">Entrar / Cadastrar</button>
+            </div>
+
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" id="mobile-menu-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="menu-icon">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="close-icon" style="display: none;">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </nav>
+
+        <div class="mobile-menu" id="mobile-menu">
+            <div class="mobile-menu-content">
+                <div class="search-bar-mobile">
+                    <input type="text" id="search-input-mobile" placeholder="Buscar parceiros...">
+                </div>
+                <button onclick="scrollToSection('sobre-nos')">Sobre nós</button>
+                <button class="login-btn" id="auth-button-mobile">Entrar / Cadastrar</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="partners-content">
+        <h1 class="page-title">Nossos @Parceiros</h1>
+        <div class="cards-container" id="cards-container">
+            <!-- Partner cards will be dynamically loaded here -->
+        </div>
+    </main>
+    
+    <script src="assets/js/header.js"></script>
+    <script src="assets/js/partness.js"></script>
+    
+</body>
+</html>
+

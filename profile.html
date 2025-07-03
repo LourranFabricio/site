@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brandge - Minha Conta</title>
+    <link rel="stylesheet" href="assets/css/profile.css">
+</head>
+<body>
+    <!-- Background -->
+    <div class="background-container">
+        <img src="/assets/img/Molten_Glass.jpg" alt="Background" class="background-image">
+    </div>
+
+    <!-- Header with Logo and Blur Bar -->
+    <header class="header">
+        <a href="/" class="logo-link">
+            <img src="assets/img/BRANDGE_FULL_LOGO.svg" alt="Brandge Logo" class="logo">
+        </a>
+        <div class="header-blur-bar"></div>
+    </header>
+
+    <!-- Main Profile Container -->
+    <main class="profile-container">
+        <div class="profile-card-container">
+            <!-- Left Column (Column A) - Profile Picture and Description -->
+            <div class="profile-left-column">
+                <div class="profile-picture-container">
+                    <img src="assets/img/PFP_placeholder.jpg" alt="Profile Picture" class="profile-picture" id="profile-picture">
+                    <input type="file" id="profile-picture-input" accept="image/*" style="display: none;">
+                </div>
+                <div class="profile-description" id="profile-description">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel facilisis.
+                </div>
+                <textarea class="profile-description-edit" id="profile-description-edit" style="display: none;">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus vel facilisis.</textarea>
+            </div>
+
+            <!-- Right Column (Column B) - Details -->
+            <div class="profile-right-column">
+                <!-- Header with Title and Edit Button -->
+                <div class="details-header">
+                    <h1 class="details-title">Detalhes</h1>
+                    <button class="edit-button" id="edit-button">
+                        <img src="assets/img/pen_edit.webp" alt="Edit" class="edit-icon">
+                    </button>
+                    <button class="save-button" id="save-button" style="display: none;">Salvar</button>
+                    <button class="cancel-button" id="cancel-button" style="display: none;">Cancelar</button>
+                </div>
+
+                <!-- Separator Line -->
+                <div class="separator-line"></div>
+
+                <!-- User Information -->
+                <div class="user-info">
+                    <div class="info-row">
+                        <span class="info-label">Nome:</span>
+                        <span class="info-value" id="name-value"></span>
+                        <input type="text" class="info-input" id="name-input"  style="display: none;">
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value" id="email-value"></span>
+                        <input type="email" class="info-input" id="email-input" style="display: none;">
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Senha:</span>
+                        <span class="info-value" id="password-value" style="display: none;"></span>
+                        <input type="password" class="info-input" id="password-input" placeholder="Nova senha" style="display: none;">
+                    </div>
+
+                    <div class="info-row" id="current-password-row" style="display: none;">
+                        <span class="info-label">Senha atual:</span>
+                        <input type="password" class="info-input" id="current-password-input" placeholder="Digite sua senha atual" style="display: none;">
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Telefone:</span>
+                        <span class="info-value" id="phone-value"></span>
+                        <input type="tel" class="info-input" id="phone-input" value="11987654321" style="display: none;">
+                    </div>
+
+                    <div class="info-row">
+                        <span class="info-label">Documento:</span>
+                        <span class="info-value" id="document-value"></span>
+                    </div>
+                </div>
+
+                <!-- Delete Account Button -->
+                <div class="delete-section">
+                    <button class="delete-button" id="delete-button">Excluir conta</button>
+                    <p class="delete-warning">*Atenção: esse processo não é reversível!</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Confirmar Exclusão</h2>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-content">
+                <p>Tem certeza que deseja excluir sua conta? Este processo não é reversível!</p>
+                <div class="modal-password">
+                    <label for="delete-password">Digite sua senha para confirmar:</label>
+                    <input type="password" id="delete-password" placeholder="Senha">
+                </div>
+                <div class="modal-buttons">
+                    <button class="modal-cancel" id="modal-cancel">Cancelar</button>
+                    <button class="modal-confirm" id="modal-confirm">Excluir Conta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/profile.js"></script>
+</body>
+</html>
+

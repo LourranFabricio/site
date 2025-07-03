@@ -61,6 +61,7 @@ section {
     position: relative;
     height: 600px;
     overflow: hidden;
+    margin-top: -4rem;
 }
 
 .carousel-container {

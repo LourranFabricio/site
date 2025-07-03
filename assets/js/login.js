@@ -1,4 +1,4 @@
-// DOM Elements
+// Seleção dos elementos do DOM
 const signinForm = document.getElementById('signin-form');
 const signupForm = document.getElementById('signup-form');
 const showSignupBtn = document.getElementById('show-signup');
@@ -11,7 +11,7 @@ const signinBtn = document.getElementById('signin-btn');
 const signupBtn = document.getElementById('signup-btn');
 const rememberMeCheckbox = document.getElementById('remember-me');
 
-// Form switching functionality
+// Troca de formulários (login/cadastro)
 function showSignupForm() {
     signinForm.style.display = 'none';
     signupForm.style.display = 'block';
@@ -22,52 +22,51 @@ function showSigninForm() {
     signinForm.style.display = 'block';
 }
 
-// Password toggle functionality with animation
+// Alternar visibilidade da senha com animação
 function togglePassword(passwordInput, toggleButton) {
     const visibleEye = toggleButton.querySelector('.visible-eye');
     const closedEye = toggleButton.querySelector('.closed-eye');
-    
-    // Add animation class
+
+    // Adiciona classe de animação (pode ser usada para transições CSS)
     toggleButton.classList.add('animating');
-    
+
     setTimeout(() => {
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
-            visibleEye.style.display = 'none';
-            closedEye.style.display = 'block';
-        } else {
-            passwordInput.type = 'password';
             visibleEye.style.display = 'block';
             closedEye.style.display = 'none';
+        } else {
+            passwordInput.type = 'password';
+            visibleEye.style.display = 'none';
+            closedEye.style.display = 'block';
         }
-        
-        // Remove animation class
+
+        // Remove a classe de animação após o efeito
         toggleButton.classList.remove('animating');
     }, 150);
 }
 
-// CPF/CNPJ formatting
+// Formatação de CPF ou CNPJ conforme digita
 function formatCpfCnpj(value) {
-    // Remove all non-numeric characters
-    value = value.replace(/\D/g, '');
-    
+    value = value.replace(/\D/g, ''); // Remove tudo que não for número
+
     if (value.length <= 11) {
-        // CPF format: 000.000.000-00
+        // Formata como CPF: 000.000.000-00
         value = value.replace(/(\d{3})(\d)/, '$1.$2');
         value = value.replace(/(\d{3})(\d)/, '$1.$2');
         value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
     } else {
-        // CNPJ format: 00.000.000/0000-00
+        // Formata como CNPJ: 00.000.000/0000-00
         value = value.replace(/^(\d{2})(\d)/, '$1.$2');
         value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
         value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
         value = value.replace(/(\d{4})(\d)/, '$1-$2');
     }
-    
+
     return value;
 }
 
-// Form validation
+// Validações dos campos
 function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -82,7 +81,7 @@ function validatePassword(password) {
     return password.length >= 6;
 }
 
-// Remember me functionality
+// Salvar ou limpar preferência de "Lembrar-me"
 function setRememberMe(remember) {
     if (remember) {
         localStorage.setItem('brandge_remember_user', 'true');
@@ -91,6 +90,7 @@ function setRememberMe(remember) {
     }
 }
 
+// Verifica se o usuário marcou "Lembrar-me" ao carregar a página
 function checkRememberMe() {
     const remembered = localStorage.getItem('brandge_remember_user');
     if (remembered) {
@@ -98,7 +98,7 @@ function checkRememberMe() {
     }
 }
 
-// Sign in functionality
+// Lógica de login (envio via fetch para signin.php)
 async function handleSignin(formData) {
     try {
         const response = await fetch('signin.php', {
@@ -112,14 +112,14 @@ async function handleSignin(formData) {
                 remember: formData.remember
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
-            // Set remember me preference
+            // Salva preferência de "lembrar-me"
             setRememberMe(formData.remember);
-            
-            // Redirect to dashboard or home page
+
+            // Redireciona para dashboard ou página definida
             window.location.href = result.redirect || 'dashboard.html';
         } else {
             alert(result.message || 'Erro ao fazer login. Verifique suas credenciais.');
@@ -130,7 +130,7 @@ async function handleSignin(formData) {
     }
 }
 
-// Sign up functionality
+// Lógica de cadastro (envio via fetch para signup.php)
 async function handleSignup(formData) {
     try {
         const response = await fetch('signup.php', {
@@ -145,14 +145,14 @@ async function handleSignup(formData) {
                 password: formData.password
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             alert('Conta criada com sucesso! Faça login para continuar.');
             showSigninForm();
-            
-            // Pre-fill email in signin form
+
+            // Preenche o campo de email do login com o email cadastrado
             document.getElementById('signin-email').value = formData.email;
         } else {
             alert(result.message || 'Erro ao criar conta. Tente novamente.');
@@ -163,7 +163,7 @@ async function handleSignup(formData) {
     }
 }
 
-// Delete user functionality (for admin purposes)
+// Função para deletar usuário (usada por administradores)
 async function deleteUser(userId) {
     try {
         const response = await fetch('delete_user.php', {
@@ -175,9 +175,9 @@ async function deleteUser(userId) {
                 user_id: userId
             })
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
             alert('Usuário deletado com sucesso.');
         } else {
@@ -189,108 +189,108 @@ async function deleteUser(userId) {
     }
 }
 
-// Event Listeners
+// Eventos após o carregamento da página
 document.addEventListener('DOMContentLoaded', function() {
-    // Check remember me on page load
+    // Verifica se deve marcar "lembrar-me"
     checkRememberMe();
-    
-    // Form switching
+
+    // Alterna entre formulários de login/cadastro
     showSignupBtn.addEventListener('click', showSignupForm);
     showSigninBtn.addEventListener('click', showSigninForm);
-    
-    // Password toggles
+
+    // Alterna visibilidade da senha nos formulários
     signinPasswordToggle.addEventListener('click', () => {
         togglePassword(signinPassword, signinPasswordToggle);
     });
-    
+
     signupPasswordToggle.addEventListener('click', () => {
         togglePassword(signupPassword, signupPasswordToggle);
     });
-    
-    // CPF/CNPJ formatting
+
+    // Formata CPF/CNPJ em tempo real
     const cpfInput = document.getElementById('signup-cpf');
     cpfInput.addEventListener('input', function(e) {
         e.target.value = formatCpfCnpj(e.target.value);
     });
-    
-    // Sign in form submission
+
+    // Envio do formulário de login
     signinBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        
+
         const email = document.getElementById('signin-email').value;
         const password = document.getElementById('signin-password').value;
         const remember = document.getElementById('remember-me').checked;
-        
-        // Validation
+
+        // Validações
         if (!email || !password) {
             alert('Por favor, preencha todos os campos.');
             return;
         }
-        
+
         if (!validateEmail(email)) {
             alert('Por favor, insira um email válido.');
             return;
         }
-        
+
         if (!validatePassword(password)) {
             alert('A senha deve ter pelo menos 6 caracteres.');
             return;
         }
-        
-        // Handle signin
+
+        // Realiza login
         handleSignin({
             email: email,
             password: password,
             remember: remember
         });
     });
-    
-    // Sign up form submission
+
+    // Envio do formulário de cadastro
     signupBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        
+
         const name = document.getElementById('signup-name').value;
         const email = document.getElementById('signup-email').value;
         const cpfCnpj = document.getElementById('signup-cpf').value;
         const password = document.getElementById('signup-password').value;
-        
-        // Validation
+
+        // Validações
         if (!name || !email || !cpfCnpj || !password) {
             alert('Por favor, preencha todos os campos.');
             return;
         }
-        
+
         if (!validateEmail(email)) {
             alert('Por favor, insira um email válido.');
             return;
         }
-        
+
         if (!validateCpfCnpj(cpfCnpj)) {
             alert('Por favor, insira um CPF ou CNPJ válido.');
             return;
         }
-        
+
         if (!validatePassword(password)) {
             alert('A senha deve ter pelo menos 6 caracteres.');
             return;
         }
-        
-        // Handle signup
+
+        // Realiza cadastro
         handleSignup({
             name: name,
             email: email,
-            cpf_cnpj: cpfCnpj.replace(/\D/g, ''), // Send only numbers to backend
+            cpf_cnpj: cpfCnpj.replace(/\D/g, ''), // Envia apenas números
             password: password
         });
     });
-    
-    // Remember me checkbox
+
+    // Atualiza armazenamento local ao marcar/desmarcar "lembrar-me"
     rememberMeCheckbox.addEventListener('change', function() {
         setRememberMe(this.checked);
     });
 });
 
-// Utility functions for backend integration
+// Torna funções disponíveis globalmente 
 window.BrandgeAuth = {
     signin: handleSignin,
     signup: handleSignup,
@@ -300,4 +300,3 @@ window.BrandgeAuth = {
     validatePassword: validatePassword,
     formatCpfCnpj: formatCpfCnpj
 };
-

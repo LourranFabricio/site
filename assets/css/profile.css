@@ -1,0 +1,497 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: #181818;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Background */
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 5px 23.5px;
+}
+
+.logo-link {
+    display: inline-block;
+    position: relative;
+    z-index: 1001;
+}
+
+.logo {
+    width: 110px;
+}
+
+.header-blur-bar {
+    display: none;
+}
+
+/* Desktop Layout */
+.profile-container {
+    padding: 100px 40px 40px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-card-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    max-width: 1200px;
+    width: 100%;
+    min-height: 600px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Left Column (Column A) */
+.profile-left-column {
+    background: rgba(248, 248, 248, 0.15);
+    backdrop-filter: blur(16px);
+    border-radius: 20px 0 0 20px;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-picture-container {
+    margin-bottom: 30px;
+    position: relative;
+    cursor: pointer;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    border-radius: 15px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.profile-picture:hover {
+    transform: scale(1.05);
+}
+
+.profile-description {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #181818;
+    text-align: left;
+}
+
+.profile-description-edit {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 1px solid rgba(24, 24, 24, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Right Column (Column B) */
+.profile-right-column {
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(16px);
+    border-radius: 0 20px 20px 0;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.details-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 15px;
+}
+
+.details-title {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #181818;
+    flex: 1;
+}
+
+.edit-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background: rgba(24, 24, 24, 0.1);
+}
+
+.edit-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.save-button {
+    background: #181818;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+    background: #333333;
+}
+
+.cancel-button {
+    background: transparent;
+    color: #181818;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.cancel-button:hover {
+    color: #666666;
+}
+
+.separator-line {
+    width: 100%;
+    height: 1px;
+    background: rgba(24, 24, 24, 0.1);
+    margin-bottom: 30px;
+}
+
+/* User Information */
+.user-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #181818;
+    min-width: 120px;
+    text-align: left;
+}
+
+.info-value {
+    color: #181818;
+    flex: 1;
+    text-align: left;
+}
+
+.info-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid rgba(24, 24, 24, 0.2);
+    border-radius: 5px;
+    background: rgba(235, 230, 230, 0.8);
+    color: #181818;
+    font-size: 14px;
+}
+
+.info-input::placeholder {
+    color: #C5C5C5;
+}
+
+/* Delete Section */
+.delete-section {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.delete-button {
+    background: #181818;
+    color: #ffffff;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.delete-button:hover {
+    background: #dc3545;
+}
+
+.delete-warning {
+    font-size: 12px;
+    color: #666666;
+    font-style: italic;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background: #f8f8f8;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    color: #181818;
+    font-size: 1.5em;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #181818;
+    padding: 5px;
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    color: #181818;
+    line-height: 1.6;
+}
+
+.modal-password {
+    margin-bottom: 30px;
+}
+
+.modal-password label {
+    display: block;
+    margin-bottom: 10px;
+    color: #181818;
+    font-weight: bold;
+}
+
+.modal-password input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(24, 24, 24, 0.2);
+    border-radius: 5px;
+    background: #EBE6E6;
+    color: #181818;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.modal-cancel {
+    background: transparent;
+    color: #181818;
+    border: 1px solid #181818;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.modal-confirm {
+    background: #dc3545;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Mobile Layout */
+@media (max-width: 768px) {
+    /* Background rotation for mobile */
+    .background-image {
+        transform: rotate(90deg);
+        width: 100vh;
+        height: 100vw;
+        object-fit: cover;
+    }
+
+    /* Header with blur bar */
+    .header {
+        padding: 15px 20px;
+    }
+
+    .header-blur-bar {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(16px);
+        z-index: -1;
+    }
+
+    .logo {
+        height: 32px;
+    }
+
+    /* Profile container for mobile */
+    .profile-container {
+        padding: 80px 20px 20px;
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+
+    .profile-card-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        max-width: none;
+        width: 100%;
+        min-height: auto;
+    }
+
+    /* Column A - Top with rounded top corners */
+    .profile-left-column {
+        border-radius: 20px 20px 0 0;
+        padding: 30px 20px;
+        order: 1;
+    }
+
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+    }
+
+    .profile-description {
+        font-size: 13px;
+    }
+
+    /* Column B - Bottom with rounded bottom corners */
+    .profile-right-column {
+        border-radius: 0 0 20px 20px;
+        padding: 30px 20px;
+        order: 2;
+    }
+
+    .details-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .details-title {
+        font-size: 2em;
+    }
+
+    .edit-button {
+        align-self: flex-end;
+    }
+
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .info-label {
+        min-width: auto;
+        font-size: 14px;
+    }
+
+    .info-value {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .info-input {
+        width: 100%;
+        padding: 12px;
+    }
+
+    .delete-section {
+        margin-top: 30px;
+    }
+
+    .delete-button {
+        width: 100%;
+        padding: 15px;
+    }
+
+    /* Modal adjustments for mobile */
+    .modal {
+        margin: 20px;
+        padding: 25px;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-cancel,
+    .modal-confirm {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
