@@ -4,9 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brandge - Entrar / Cadastrar</title>
+    <link rel="stylesheet" href="assets/css/header.css">
     <link rel="stylesheet" href="assets/css/login.css">
 </head>
 <body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="/">
+                    <img src="assets/img/BRANDGE_FULL_LOGO.svg" alt="Brandge Logo">
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="partness.html">Parceiros</a>
+                <button class="login-btn">Entrar / Cadastrar</button>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" id="mobile-menu-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="menu-icon">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="close-icon" style="display: none;">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </nav>
+        <div class="mobile-menu" id="mobile-menu" style="display: none;">
+            <div class="mobile-menu-content">
+                <a href="index.html">Home</a>
+                <a href="partness.html">Parceiros</a>
+                <button class="login-btn">Entrar / Cadastrar</button>
+            </div>
+        </div>
+    </header>
     <!-- Background Image -->
     <div class="background-image"></div>
         
@@ -87,6 +120,11 @@
                 </div>
                 
                 <div class="form-group">
+                    <label for="signup-phone">TELEFONE</label>
+                    <input type="tel" id="signup-phone" name="phone" placeholder="(11) 99999-9999" required>
+                </div>
+                
+                <div class="form-group">
                     <label for="signup-password">SENHA</label>
                     <div class="password-input-container">
                         <input type="password" id="signup-password" name="password" placeholder="Senha" required>
@@ -94,6 +132,14 @@
                             <img src="/assets/img/closed_eye.svg" alt="Mostrar senha" class="eye-icon closed-eye" />
                             <img src="/assets/img/visible_eye.svg" alt="Ocultar senha" class="eye-icon visible-eye" style="display: none;" />
                         </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signup-role">Tipo de Conta</label>
+                    <div class="role-options">
+                        <label><input type="radio" name="role" id="signup-role-cliente" value="cliente" checked> Cliente</label>
+                        <label><input type="radio" name="role" id="signup-role-designer" value="designer"> Designer</label>
                     </div>
                 </div>
                 
@@ -113,4 +159,5 @@
     
 </body>
 <script src="assets/js/login.js"></script>
+<script src="assets/js/header.js"></script>
 </html>

@@ -80,19 +80,47 @@ document.addEventListener('click', function(event) {
 //Variável global para o estado de autenticação
 window.isLoggedIn = false;
 
-// Atualiza o texto e link dos botões de autenticação
+// Função para atualizar botões de autenticação e dashboard/logout
 window.updateAuthButton = function() {
     const authButtons = document.querySelectorAll('.login-btn');
+    const navLinks = document.querySelectorAll('.nav-links');
+    const isDesigner = localStorage.getItem('brandge_user_role') === 'designer';
+    // Remove botões antigos
+    document.querySelectorAll('.dashboard-btn, .logout-btn').forEach(btn => btn.remove());
+    // Botão Dashboard
+    if (window.isLoggedIn && isDesigner) {
+        navLinks.forEach(nav => {
+            const dashBtn = document.createElement('a');
+            dashBtn.textContent = 'Dashboard';
+            dashBtn.className = 'dashboard-btn';
+            // dashBtn.href = 'dashboard-designer.html'; // Removido pois não existe mais
+            // Se necessário, pode remover completamente a criação do botão ou redirecionar para outra página
+        });
+    }
+    // Botão Sair
+    if (window.isLoggedIn) {
+        navLinks.forEach(nav => {
+            const logoutBtn = document.createElement('button');
+            logoutBtn.textContent = 'Sair';
+            logoutBtn.className = 'logout-btn';
+            logoutBtn.onclick = async function() {
+                await fetch('api/logout.php', { method: 'POST', credentials: 'include' });
+                window.setLoginState(false);
+                localStorage.removeItem('brandge_user_role');
+                window.location.href = 'index.html';
+            };
+            nav.appendChild(logoutBtn);
+        });
+    }
+    // Botão de login/cadastro
     const authText = window.isLoggedIn ? 'Minha conta' : 'Entrar / Cadastrar';
     const authHref = window.isLoggedIn ? 'profile.html' : 'login.html';
     authButtons.forEach(btn => {
         btn.textContent = authText;
-        // Sempre define o onclick para garantir o redirecionamento correto
         btn.onclick = function(e) {
             e.preventDefault();
             window.location.href = authHref;
         };
-        
         if (btn.tagName === 'A') {
             btn.setAttribute('href', authHref);
         }
@@ -107,14 +135,21 @@ window.setLoginState = function(state) {
 };
 
 // Inicializa o estado de login ao carregar a página
-document.addEventListener('DOMContentLoaded', function() {
-    // Recupera do localStorage
-    const savedAuthState = localStorage.getItem('brandge_auth_state');
-    if (savedAuthState !== null) {
-        window.isLoggedIn = JSON.parse(savedAuthState);
-    }
-    window.updateAuthButton();
+// Agora consulta o backend para garantir segurança
 
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('api/check-session.php', { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+            if (data.logged_in) {
+                window.isLoggedIn = true;
+                localStorage.setItem('brandge_user_role', data.role);
+            } else {
+                window.isLoggedIn = false;
+                localStorage.removeItem('brandge_user_role');
+            }
+            window.updateAuthButton();
+        });
     // Redireciona ao clicar no botão de login (fallback para botões não atualizados)
     document.querySelectorAll('.login-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -123,3 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Ao fazer login, salve o papel do usuário:
+// localStorage.setItem('brandge_user_role', 'designer'); // ou 'cliente'

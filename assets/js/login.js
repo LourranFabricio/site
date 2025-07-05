@@ -66,6 +66,17 @@ function formatCpfCnpj(value) {
     return value;
 }
 
+// Função para formatar telefone (igual ao profile)
+function formatPhone(phone) {
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length === 11) {
+        return `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
+    } else if (digits.length === 13) {
+        return `+${digits.slice(0,2)} (${digits.slice(2,4)}) ${digits.slice(4,9)}-${digits.slice(9)}`;
+    }
+    return phone;
+}
+
 // Validações dos campos
 function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -101,7 +112,7 @@ function checkRememberMe() {
 // Lógica de login (envio via fetch para signin.php)
 async function handleSignin(formData) {
     try {
-        const response = await fetch('signin.php', {
+        const response = await fetch('api/login.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -120,20 +131,20 @@ async function handleSignin(formData) {
             setRememberMe(formData.remember);
 
             // Redireciona para dashboard ou página definida
-            window.location.href = result.redirect || 'dashboard.html';
+            window.location.href = result.redirect || 'profile.html';
         } else {
             alert(result.message || 'Erro ao fazer login. Verifique suas credenciais.');
         }
-    } catch (error) {
-        console.error('Signin error:', error);
-        alert('Erro de conexão. Tente novamente.');
-    }
+            } catch (error) {
+            // Log será feito no servidor
+            alert('Erro de conexão. Tente novamente.');
+        }
 }
 
-// Lógica de cadastro (envio via fetch para signup.php)
+// Lógica de cadastro (envio via fetch para api/register.php)
 async function handleSignup(formData) {
     try {
-        const response = await fetch('signup.php', {
+        const response = await fetch('api/register.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -142,7 +153,9 @@ async function handleSignup(formData) {
                 name: formData.name,
                 email: formData.email,
                 cpf_cnpj: formData.cpf_cnpj,
-                password: formData.password
+                password: formData.password,
+                role: formData.role,
+                phone: formData.phone
             })
         });
 
@@ -158,7 +171,7 @@ async function handleSignup(formData) {
             alert(result.message || 'Erro ao criar conta. Tente novamente.');
         }
     } catch (error) {
-        console.error('Signup error:', error);
+        // Log será feito no servidor
         alert('Erro de conexão. Tente novamente.');
     }
 }
@@ -184,7 +197,7 @@ async function deleteUser(userId) {
             alert(result.message || 'Erro ao deletar usuário.');
         }
     } catch (error) {
-        console.error('Delete user error:', error);
+        // Log será feito no servidor
         alert('Erro de conexão. Tente novamente.');
     }
 }
@@ -212,6 +225,16 @@ document.addEventListener('DOMContentLoaded', function() {
     cpfInput.addEventListener('input', function(e) {
         e.target.value = formatCpfCnpj(e.target.value);
     });
+
+    // Formatação e restrição do telefone em tempo real
+    const phoneInput = document.getElementById('signup-phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            let val = phoneInput.value.replace(/\D/g, '');
+            if (val.length > 13) val = val.slice(0,13);
+            phoneInput.value = formatPhone(val);
+        });
+    }
 
     // Envio do formulário de login
     signinBtn.addEventListener('click', function(e) {
@@ -251,25 +274,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const name = document.getElementById('signup-name').value;
         const email = document.getElementById('signup-email').value;
-        const cpfCnpj = document.getElementById('signup-cpf').value;
+        const cpf_cnpj = document.getElementById('signup-cpf').value;
         const password = document.getElementById('signup-password').value;
+        const role = document.querySelector('input[name="role"]:checked').value;
+        const phone = document.getElementById('signup-phone').value;
 
         // Validações
-        if (!name || !email || !cpfCnpj || !password) {
+        if (!name || !email || !cpf_cnpj || !password) {
             alert('Por favor, preencha todos os campos.');
             return;
         }
-
         if (!validateEmail(email)) {
             alert('Por favor, insira um email válido.');
             return;
         }
-
-        if (!validateCpfCnpj(cpfCnpj)) {
-            alert('Por favor, insira um CPF ou CNPJ válido.');
+        if (!validateCpfCnpj(cpf_cnpj)) {
+            alert('CPF ou CNPJ inválido.');
             return;
         }
-
         if (!validatePassword(password)) {
             alert('A senha deve ter pelo menos 6 caracteres.');
             return;
@@ -279,8 +301,10 @@ document.addEventListener('DOMContentLoaded', function() {
         handleSignup({
             name: name,
             email: email,
-            cpf_cnpj: cpfCnpj.replace(/\D/g, ''), // Envia apenas números
-            password: password
+            cpf_cnpj: cpf_cnpj,
+            password: password,
+            role: role,
+            phone: phone
         });
     });
 
@@ -298,5 +322,6 @@ window.BrandgeAuth = {
     validateEmail: validateEmail,
     validateCpfCnpj: validateCpfCnpj,
     validatePassword: validatePassword,
-    formatCpfCnpj: formatCpfCnpj
+    formatCpfCnpj: formatCpfCnpj,
+    formatPhone: formatPhone
 };

@@ -11,81 +11,165 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuIcon = document.getElementById('menu-icon');
     const closeIcon = document.getElementById('close-icon');
 
-    // Simula dados de parceiros vindos do backend
-    const partners = [
-        {
-            id: 1,
-            name: 'Secret Idea Studio',
-            specialty: 'Design Gráfico',
-            image: 'assets/img/SECRET_IDEA_STUDIO_Card.png'
-        },
-        {
-            id: 2,
-            name: 'Fabricio Lourran',
-            specialty: 'Branding e Identidade Visual',
-            image: 'assets/img/Fabricio_Lourran_Card.png'
-        },
-        {
-            id: 3,
-            name: 'Creative Minds Agency',
-            specialty: 'Ilustração e Animeção',
-            image: 'assets/img/SECRET_IDEA_STUDIO_Card.png'
-        },
-        {
-            id: 4,
-            name: 'Pixel Perfect Studio',
-            specialty: 'Web Design e UI/UX',
-            image: 'assets/img/glass_door.png'
-        },
-        {
-            id: 5,
-            name: 'Artistic Touch Co.',
-            specialty: 'Marketing Digital',
-            image: 'assets/img/glass_door.png'
-        },
-        {
-            id: 6,
-            name: 'Brand Builders Inc.',
-            specialty: 'Consultoria de Marca',
-            image: 'assets/img/glass_door.png'
+    let designers = [];
+    let filteredDesigners = [];
+    let selectedCardIndex = null;
+    // Índice atual do carrossel para cada designer
+    const carouselIndexes = {};
+
+    // Função para buscar designers do backend
+    async function fetchDesigners() {
+        try {
+            const res = await fetch('api/list-designers.php');
+            const data = await res.json();
+            if (data.success) {
+                designers = data.designers.filter(d => d.portfolio && d.portfolio.length > 0);
+                filteredDesigners = designers;
+                renderDesigners();
+            } else {
+                cardsContainer.innerHTML = '<p style="color: #6b6b6b; font-size: 1.2em; grid-column: 1 / -1;">Erro ao carregar parceiros.</p>';
+            }
+        } catch (e) {
+            cardsContainer.innerHTML = '<p style="color: #6b6b6b; font-size: 1.2em; grid-column: 1 / -1;">Erro de conexão ao carregar parceiros.</p>';
         }
-    ];
+    }
 
-    // Renderiza os parceiros na tela (com ou sem filtro)
-    function renderPartners(filter = '') {
+    // Função para renderizar os designers
+    function renderDesigners() {
         cardsContainer.innerHTML = '';
-
-        const filteredPartners = partners.filter(partner =>
-            partner.name.toLowerCase().includes(filter.toLowerCase()) ||
-            partner.specialty.toLowerCase().includes(filter.toLowerCase())
-        );
-
-        if (filteredPartners.length === 0) {
+        if (filteredDesigners.length === 0) {
             cardsContainer.innerHTML = '<p style="color: #6b6b6b; font-size: 1.2em; grid-column: 1 / -1;">Nenhum parceiro encontrado.</p>';
             return;
         }
-
-        filteredPartners.forEach(partner => {
+        filteredDesigners.forEach((designer, idx) => {
+            // Inicializa o índice do carrossel para cada designer
+            if (!(designer.id in carouselIndexes)) {
+                carouselIndexes[designer.id] = 0;
+            }
             const card = document.createElement('div');
             card.classList.add('card');
+            if (selectedCardIndex === idx) card.classList.add('selected');
+            // Carousel de imagens do portfólio
+            let portfolioHtml = '';
+            if (designer.portfolio.length > 1) {
+                portfolioHtml = `
+                    <div class="designer-carousel" data-idx="${idx}" style="position:relative;">
+                        <button class="carousel-arrow left" aria-label="Imagem anterior" style="position:absolute;top:50%;left:10px;transform:translateY(-50%);z-index:2;background:rgba(0,0,0,0.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:1.5em;cursor:pointer;">&#8592;</button>
+                        <img src="${designer.portfolio[carouselIndexes[designer.id]]}" alt="Portfólio de ${designer.name}" class="designer-portfolio">
+                        <button class="carousel-arrow right" aria-label="Próxima imagem" style="position:absolute;top:50%;right:10px;transform:translateY(-50%);z-index:2;background:rgba(0,0,0,0.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:1.5em;cursor:pointer;">&#8594;</button>
+                    </div>`;
+            } else {
+                portfolioHtml = `<img src="${designer.portfolio[0]}" alt="Portfólio de ${designer.name}" class="designer-portfolio">`;
+            }
+            // Especialidades como tags
+            const specialtiesHtml = designer.specialties.map(s => `<span class="tag">${s}</span>`).join(' ');
+            // Contato
+            let contactHtml = '';
+            if (selectedCardIndex === idx) {
+                contactHtml = `<div class="designer-contact" style="margin-top:12px;">
+                    <strong>Contato:</strong><br>
+                    <span style="display:inline-block;margin:2px 0;">📧 <a href='mailto:${designer.email}'>${designer.email}</a></span><br>
+                    <span style="display:inline-block;margin:2px 0;">📱 ${designer.phone ? designer.phone : 'Não informado'}</span>
+                </div>`;
+            }
             card.innerHTML = `
-                <img src="${partner.image}" alt="${partner.name}" onerror="this.src='https://via.placeholder.com/300x250/CCCCCC/666666?text=Imagem+Indisponível'">
+                ${portfolioHtml}
                 <div class="card-info">
-                    <h3 class="card-name">${partner.name}</h3>
-                    <p class="card-specialty">${partner.specialty}</p>
+                    <h3 class="card-name">${designer.name}</h3>
+                    <div class="card-specialty">${specialtiesHtml}</div>
+                    ${contactHtml}
                 </div>
             `;
+            card.addEventListener('click', () => {
+                // Apenas alterna a seleção do card, sem re-renderizar tudo
+                if (selectedCardIndex === idx) {
+                    selectedCardIndex = null; // Deseleciona se já estava selecionado
+                } else {
+                    selectedCardIndex = idx; // Seleciona o novo card
+                }
+                // Atualiza apenas a classe 'selected' e as informações de contato
+                document.querySelectorAll('.card').forEach((card, cardIdx) => {
+                    if (cardIdx === selectedCardIndex) {
+                        card.classList.add('selected');
+                        // Adiciona informações de contato se não existirem
+                        if (!card.querySelector('.designer-contact')) {
+                            const contactDiv = document.createElement('div');
+                            contactDiv.className = 'designer-contact';
+                            contactDiv.style.marginTop = '12px';
+                            contactDiv.innerHTML = `
+                                <strong>Contato:</strong><br>
+                                <span style="display:inline-block;margin:2px 0;">📧 <a href='mailto:${designer.email}'>${designer.email}</a></span><br>
+                                <span style="display:inline-block;margin:2px 0;">📱 ${designer.phone ? designer.phone : 'Não informado'}</span>
+                            `;
+                            card.querySelector('.card-info').appendChild(contactDiv);
+                        }
+                    } else {
+                        card.classList.remove('selected');
+                        // Remove informações de contato
+                        const contactDiv = card.querySelector('.designer-contact');
+                        if (contactDiv) {
+                            contactDiv.remove();
+                        }
+                    }
+                });
+            });
+            card.addEventListener('mouseenter', () => card.classList.add('hovered'));
+            card.addEventListener('mouseleave', () => card.classList.remove('hovered'));
             cardsContainer.appendChild(card);
+        });
+        // Carousel funcionalidade
+        document.querySelectorAll('.designer-carousel').forEach((carousel) => {
+            const idx = parseInt(carousel.dataset.idx, 10);
+            const designer = filteredDesigners[idx];
+            if (!designer || !designer.portfolio.length) return;
+            const img = carousel.querySelector('img');
+            const left = carousel.querySelector('.carousel-arrow.left');
+            const right = carousel.querySelector('.carousel-arrow.right');
+            left.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (designer.portfolio.length > 1) {
+                    carouselIndexes[designer.id] = (carouselIndexes[designer.id] - 1 + designer.portfolio.length) % designer.portfolio.length;
+                    img.src = designer.portfolio[carouselIndexes[designer.id]];
+                }
+            });
+            right.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (designer.portfolio.length > 1) {
+                    carouselIndexes[designer.id] = (carouselIndexes[designer.id] + 1) % designer.portfolio.length;
+                    img.src = designer.portfolio[carouselIndexes[designer.id]];
+                }
+            });
         });
     }
 
-    // Renderiza os parceiros ao carregar a página
-    renderPartners();
-
     // Função de busca
     function handleSearch(searchValue) {
-        renderPartners(searchValue);
+        // Se a busca estiver vazia, mostra todos os designers
+        if (!searchValue.trim()) {
+            filteredDesigners = designers;
+            renderDesigners();
+            return;
+        }
 
+        // Divide a busca por vírgulas e remove espaços em branco
+        const searchTerms = searchValue.split(',').map(term => term.trim().toLowerCase()).filter(term => term.length > 0);
+        
+        filteredDesigners = designers.filter(designer => {
+            const designerName = designer.name.toLowerCase();
+            const designerSpecialties = designer.specialties.map(s => s.toLowerCase());
+            
+            // Verifica se pelo menos um termo de busca corresponde ao nome
+            const nameMatch = searchTerms.some(term => designerName.includes(term));
+            
+            // Verifica se todos os termos de busca estão presentes nas especialidades
+            const specialtiesMatch = searchTerms.every(term => 
+                designerSpecialties.some(specialty => specialty.includes(term))
+            );
+            
+            return nameMatch || specialtiesMatch;
+        });
+        
+        renderDesigners();
         // Sincroniza os campos de busca desktop e mobile
         if (searchInputDesktop.value !== searchValue) {
             searchInputDesktop.value = searchValue;
@@ -95,10 +179,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Escutando eventos de digitação nos campos de busca
+    // Eventos de busca
     searchInputDesktop.addEventListener('input', (e) => handleSearch(e.target.value));
     searchInputMobile.addEventListener('input', (e) => handleSearch(e.target.value));
 
+    // Inicializa
+    fetchDesigners();
 
     // Usa a função global para atualizar botões de autenticação
     if (window.updateAuthButton) {
@@ -136,31 +222,37 @@ document.addEventListener('DOMContentLoaded', () => {
     window.partnersAPI = {
         async fetchPartners() {
             // Em produção, isso deve buscar do backend
-            return partners;
+            return designers;
         },
         async searchPartners(query) {
-            return partners.filter(partner =>
-                partner.name.toLowerCase().includes(query.toLowerCase()) ||
-                partner.specialty.toLowerCase().includes(query.toLowerCase())
-            );
+            // Se a busca estiver vazia, retorna todos os designers
+            if (!query.trim()) {
+                return designers;
+            }
+
+            // Divide a busca por vírgulas e remove espaços em branco
+            const searchTerms = query.split(',').map(term => term.trim().toLowerCase()).filter(term => term.length > 0);
+            
+            return designers.filter(designer => {
+                const designerName = designer.name.toLowerCase();
+                const designerSpecialties = designer.specialties.map(s => s.toLowerCase());
+                
+                // Verifica se pelo menos um termo de busca corresponde ao nome
+                const nameMatch = searchTerms.some(term => designerName.includes(term));
+                
+                // Verifica se todos os termos de busca estão presentes nas especialidades
+                const specialtiesMatch = searchTerms.every(term => 
+                    designerSpecialties.some(specialty => specialty.includes(term))
+                );
+                
+                return nameMatch || specialtiesMatch;
+            });
         },
         async getPartner(id) {
-            return partners.find(partner => partner.id === id);
+            return designers.find(designer => designer.id === id);
         }
     };
 
-    // Mensagem no console para desenvolvedores
-    console.log('Partners page loaded successfully');
-    console.log('Available functions: toggleLoginState(), setLoginState(state), partnersAPI');
-});
-
-// Redireciona ao clicar no botão com classe "login-btn"
-document.addEventListener('DOMContentLoaded', function() {
-    const loginButton = document.querySelector('.login-btn');
-
-    if (loginButton) {
-        loginButton.addEventListener('click', function() {
-            window.location.href = 'login.html'; // Caminho do arquivo de login
-        });
-    }
+    // Funções disponíveis para integração
+    // toggleLoginState(), setLoginState(state), partnersAPI
 });

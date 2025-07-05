@@ -26,10 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const phoneInput = document.getElementById('phone-input');
     const profileDescription = document.getElementById('profile-description');
     const profileDescriptionEdit = document.getElementById('profile-description-edit');
+    const newPasswordRow = document.getElementById('new-password-row');
+    const specialtiesRow = document.getElementById('specialties-row');
+    const specialtiesList = document.getElementById('specialties-list');
 
     // Variáveis de estado
     let isEditing = false;
     let originalData = {}; // Dados originais do usuário
+    let allSpecialties = [];
+    let selectedSpecialties = [];
 
     // Armazena os dados atuais do perfil para restauração se necessário
     function storeOriginalData() {
@@ -66,14 +71,21 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.style.display = 'block';
         emailValue.style.display = 'none';
         emailInput.style.display = 'block';
-        passwordValue.style.display = 'block';
-        passwordInput.style.display = 'block';
         currentPasswordRow.style.display = 'flex';
         currentPasswordInput.style.display = 'block';
+        newPasswordRow.style.display = 'flex';
+        passwordInput.style.display = 'block';
         phoneValue.style.display = 'none';
         phoneInput.style.display = 'block';
         profileDescription.style.display = 'none';
         profileDescriptionEdit.style.display = 'block';
+        if (userRole === 'designer') {
+            specialtiesRow.style.display = 'flex';
+            renderSpecialtiesCheckboxes();
+            specialtiesList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.disabled = false);
+        } else {
+            specialtiesRow.style.display = 'none';
+        }
 
         // Torna a imagem clicável para alterar
         profilePicture.style.cursor = 'pointer';
@@ -92,14 +104,21 @@ document.addEventListener('DOMContentLoaded', () => {
         nameInput.style.display = 'none';
         emailValue.style.display = 'block';
         emailInput.style.display = 'none';
-        passwordValue.style.display = 'none';
-        passwordInput.style.display = 'none';
         currentPasswordRow.style.display = 'none';
         currentPasswordInput.style.display = 'none';
+        newPasswordRow.style.display = 'none';
+        passwordInput.style.display = 'none';
         phoneValue.style.display = 'block';
         phoneInput.style.display = 'none';
         profileDescription.style.display = 'block';
         profileDescriptionEdit.style.display = 'none';
+        if (userRole === 'designer') {
+            specialtiesRow.style.display = 'flex';
+            renderSpecialtiesCheckboxes();
+            specialtiesList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.disabled = true);
+        } else {
+            specialtiesRow.style.display = 'none';
+        }
 
         // Restaura aparência da imagem
         profilePicture.style.cursor = 'default';
@@ -108,6 +127,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // Limpa campos de senha
         passwordInput.value = '';
         currentPasswordInput.value = '';
+    }
+
+    // Função para formatar telefone
+    function formatPhone(phone) {
+        const digits = phone.replace(/\D/g, '');
+        if (digits.length === 11) {
+            return `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
+        } else if (digits.length === 13) {
+            return `+${digits.slice(0,2)} (${digits.slice(2,4)}) ${digits.slice(4,9)}-${digits.slice(9)}`;
+        }
+        return phone;
+    }
+
+    // Formatação automática ao digitar
+    phoneInput.addEventListener('input', function() {
+        let val = phoneInput.value.replace(/\D/g, '');
+        if (val.length > 13) val = val.slice(0,13);
+        phoneInput.value = formatPhone(val);
+    });
+
+    // Validação de telefone
+    function isValidPhone(phone) {
+        const digits = phone.replace(/\D/g, '');
+        return digits.length === 11 || digits.length === 13;
     }
 
     // Salva alterações no perfil
@@ -135,6 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        if (!isValidPhone(phoneInput.value)) {
+            alert('Telefone inválido. Use 11 ou 13 dígitos.');
+            return;
+        }
+
         try {
             const updateData = {
                 name: nameInput.value.trim(),
@@ -144,13 +192,26 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             if (passwordInput.value) {
-                updateData.newPassword = passwordInput.value;
+                if (!currentPasswordInput.value) {
+                    alert('Digite sua senha atual para alterar a senha');
+                    return;
+                }
                 updateData.currentPassword = currentPasswordInput.value;
+                updateData.newPassword = passwordInput.value;
             }
 
-            const response = await updateProfile(updateData);
+            if (userRole === 'designer') {
+                updateData.specialties = selectedSpecialties;
+            }
 
-            if (response.success) {
+            const response = await fetch('api/update-profile.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateData)
+            });
+            const result = await response.json();
+
+            if (result.success) {
                 // Atualiza interface
                 nameValue.textContent = updateData.name;
                 emailValue.textContent = updateData.email;
@@ -161,11 +222,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 exitEditMode(); // Sai do modo edição
                 alert('Perfil atualizado com sucesso!');
+                // Limpa campos de senha
+                passwordInput.value = '';
+                currentPasswordInput.value = '';
             } else {
-                alert(response.message || 'Erro ao atualizar perfil');
+                alert(result.message || 'Erro ao atualizar perfil');
             }
         } catch (error) {
-            console.error('Erro ao salvar:', error);
+            // Log será feito no servidor
             alert('Erro ao atualizar perfil. Tente novamente.');
         }
     }
@@ -234,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(response.message || 'Erro ao excluir conta');
             }
         } catch (error) {
-            console.error('Erro ao excluir:', error);
+            // Log será feito no servidor
             alert('Erro ao excluir conta. Tente novamente.');
         }
     }
@@ -282,11 +346,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function deleteAccount(password) {
         try {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({ success: true });
-                }, 1000);
+            const response = await fetch('api/delete-account.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: password })
             });
+            const result = await response.json();
+            return result;
         } catch (error) {
             console.error('Erro ao excluir conta:', error);
             return { success: false, message: 'Erro de rede' };
@@ -304,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }, 1000);
             });
         } catch (error) {
-            console.error('Erro ao fazer upload da imagem:', error);
+            // Log será feito no servidor
             return { success: false };
         }
     }
@@ -313,37 +381,193 @@ document.addEventListener('DOMContentLoaded', () => {
         return localStorage.getItem('brandge_auth_token') || '';
     }
 
-    async function loadProfileData() {
-        try {
-            // Exemplo: busca os dados do usuário logado no backend
-            const res = await fetch('/backend/get_user.php', {
-                headers: { Authorization: `Bearer ${getAuthToken()}` }
-            });
-            if (!res.ok) throw new Error('Erro ao buscar dados');
-            const user = await res.json();
-
-            // Preenche os campos do perfil
-            nameValue.textContent = user.nome || "";
-            nameInput.value = user.nome || "";
-            emailValue.textContent = user.email || "";
-            emailInput.value = user.email || "";
-            phoneValue.textContent = user.telefone || "";
-            phoneInput.value = user.telefone || "";
-            profileDescription.textContent = user.descricao || "";
-            profileDescriptionEdit.value = user.descricao || "";
-            document.getElementById("document-value").textContent = user.documento || "";
-
-            // Se tiver foto de perfil
-            if (user.foto) profilePicture.src = user.foto;
-
-        } catch (error) {
-            console.error('Erro ao carregar perfil:', error);
-            // window.location.href = 'login.html'; // se quiser redirecionar se não estiver logado
+    // Função para buscar dados do usuário logado (universal)
+    async function fetchProfileData() {
+        const res = await fetch('api/check-session.php');
+        const session = await res.json();
+        if (!session.success) {
+            window.location.href = 'login.html';
+            return;
+        }
+        userRole = session.user.role;
+        // Preencher campos
+        nameValue.textContent = session.user.name;
+        nameInput.value = session.user.name;
+        emailValue.textContent = session.user.email;
+        emailInput.value = session.user.email;
+        phoneValue.textContent = session.user.phone || '';
+        phoneInput.value = session.user.phone || '';
+        profileDescription.textContent = session.user.bio || '';
+        profileDescriptionEdit.value = session.user.bio || '';
+        // Imagem de perfil (se houver)
+        if (session.user.profile_picture) {
+            profilePicture.src = session.user.profile_picture;
+        }
+        // Se for designer, mostrar portfólio e especialidades
+        if (userRole === 'designer') {
+            portfolioSection.style.display = 'block';
+            specialtiesRow.style.display = 'flex';
+            loadPortfolio();
+            await fetchAllSpecialties();
+            await fetchDesignerSpecialties();
+            specialtiesRow.style.display = 'flex';
+            renderSpecialtiesCheckboxes();
+            specialtiesList.querySelectorAll('input[type=checkbox]').forEach(cb => cb.disabled = true);
+        } else {
+            portfolioSection.style.display = 'none';
+            specialtiesRow.style.display = 'none';
         }
     }
 
-    // Inicializa os dados do perfil na página
-    loadProfileData();
+    // Função para carregar portfólio do designer
+    async function loadPortfolio() {
+        portfolioList.innerHTML = '<li>Carregando...</li>';
+        const res = await fetch('api/get-portfolio.php');
+        const data = await res.json();
+        if (!data.success) {
+            portfolioList.innerHTML = '<li>Erro ao carregar portfólio</li>';
+            return;
+        }
+        if (!data.images.length) {
+            portfolioList.innerHTML = '<li>Nenhuma imagem enviada</li>';
+            return;
+        }
+        portfolioList.innerHTML = '';
+        data.images.forEach(img => {
+            const li = document.createElement('li');
+            li.className = 'portfolio-item';
+            
+            // Criar container da miniatura
+            const thumbnailContainer = document.createElement('div');
+            thumbnailContainer.className = 'portfolio-thumbnail';
+            
+            // Criar miniatura da imagem
+            const thumbnail = document.createElement('img');
+            thumbnail.src = img.image_path;
+            thumbnail.alt = 'Miniatura do portfólio';
+            thumbnail.className = 'portfolio-thumbnail-img';
+            
+            // Criar nome do arquivo
+            const fileName = document.createElement('span');
+            fileName.className = 'portfolio-filename';
+            fileName.textContent = img.image_path.split('/').pop();
+            
+            // Criar botão de exclusão
+            const delBtn = document.createElement('button');
+            delBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg>';
+            delBtn.title = 'Excluir imagem';
+            delBtn.className = 'portfolio-delete-btn';
+            delBtn.onclick = () => deletePortfolioImage(img.id);
+            
+            // Montar estrutura
+            thumbnailContainer.appendChild(thumbnail);
+            li.appendChild(thumbnailContainer);
+            li.appendChild(fileName);
+            li.appendChild(delBtn);
+            portfolioList.appendChild(li);
+        });
+    }
 
-    console.log('Página de perfil carregada com sucesso!');
+    // Função para excluir imagem do portfólio
+    async function deletePortfolioImage(imageId) {
+        if (!confirm('Deseja realmente excluir esta imagem?')) return;
+        const res = await fetch('api/delete-portfolio-image.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: imageId })
+        });
+        const data = await res.json();
+        if (data.success) {
+            loadPortfolio();
+        } else {
+            alert(data.message || 'Erro ao excluir imagem');
+        }
+    }
+
+    // Elementos do portfólio
+    const portfolioSection = document.getElementById('portfolio-section');
+    const portfolioList = document.getElementById('portfolio-list');
+    const portfolioUploadForm = document.getElementById('portfolio-upload-form');
+    const portfolioFilesInput = document.getElementById('portfolio-files');
+    const portfolioUploadBtn = document.getElementById('portfolio-upload-btn');
+    const portfolioUploadInfo = document.getElementById('portfolio-upload-info');
+
+    // Adicionar listeners do portfólio só se os elementos existirem
+    if (portfolioUploadBtn && portfolioFilesInput && portfolioUploadForm && portfolioUploadInfo) {
+        portfolioUploadBtn.addEventListener('click', () => portfolioFilesInput.click());
+        portfolioFilesInput.addEventListener('change', () => {
+            if (portfolioFilesInput.files.length) {
+                portfolioUploadInfo.textContent = Array.from(portfolioFilesInput.files).map(f => f.name).join(', ');
+            } else {
+                portfolioUploadInfo.textContent = 'Nenhuma imagem selecionada';
+            }
+        });
+        portfolioUploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!portfolioFilesInput.files.length) {
+                alert('Selecione pelo menos uma imagem');
+                return;
+            }
+            const formData = new FormData();
+            for (const file of portfolioFilesInput.files) {
+                formData.append('portfolio_files[]', file);
+            }
+            const res = await fetch('api/upload-portfolio.php', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                portfolioFilesInput.value = '';
+                portfolioUploadInfo.textContent = 'Nenhuma imagem selecionada';
+                loadPortfolio();
+            } else {
+                alert(data.message || 'Erro ao enviar imagens');
+            }
+        });
+    }
+
+    // Função para buscar todas as especialidades
+    async function fetchAllSpecialties() {
+        const res = await fetch('api/list-specialties.php');
+        const data = await res.json();
+        if (data.success) {
+            allSpecialties = data.specialties;
+        }
+    }
+
+    // Função para buscar especialidades do designer
+    async function fetchDesignerSpecialties() {
+        const res = await fetch('api/get-specialties.php');
+        const data = await res.json();
+        if (data.success) {
+            selectedSpecialties = data.specialties.map(s => String(s.id));
+        }
+    }
+
+    // Renderiza os checkboxes de especialidades
+    function renderSpecialtiesCheckboxes() {
+        specialtiesList.innerHTML = '';
+        allSpecialties.forEach(spec => {
+            const label = document.createElement('label');
+            label.style.marginRight = '12px';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = spec.id;
+            checkbox.checked = selectedSpecialties.includes(String(spec.id));
+            checkbox.onchange = function() {
+                if (checkbox.checked) {
+                    if (!selectedSpecialties.includes(checkbox.value)) selectedSpecialties.push(checkbox.value);
+                } else {
+                    selectedSpecialties = selectedSpecialties.filter(id => id !== checkbox.value);
+                }
+            };
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(' ' + spec.name));
+            specialtiesList.appendChild(label);
+        });
+    }
+
+    // Substituir chamada de inicialização para usar fetchProfileData
+    fetchProfileData();
 });

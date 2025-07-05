@@ -4,21 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brandge - Minha Conta</title>
+    <link rel="stylesheet" href="assets/css/header.css">
     <link rel="stylesheet" href="assets/css/profile.css">
 </head>
 <body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="/">
+                    <img src="assets/img/BRANDGE_FULL_LOGO.svg" alt="Brandge Logo">
+                </a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="partness.html">Parceiros</a>
+                <button class="login-btn">Entrar / Cadastrar</button>
+            </div>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" id="mobile-menu-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="menu-icon">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="close-icon" style="display: none;">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </nav>
+        <div class="mobile-menu" id="mobile-menu" style="display: none;">
+            <div class="mobile-menu-content">
+                <a href="index.html">Home</a>
+                <a href="partness.html">Parceiros</a>
+                <button class="login-btn">Entrar / Cadastrar</button>
+            </div>
+        </div>
+    </header>
+
     <!-- Background -->
     <div class="background-container">
         <img src="/assets/img/Molten_Glass.jpg" alt="Background" class="background-image">
     </div>
-
-    <!-- Header with Logo and Blur Bar -->
-    <header class="header">
-        <a href="/" class="logo-link">
-            <img src="assets/img/BRANDGE_FULL_LOGO.svg" alt="Brandge Logo" class="logo">
-        </a>
-        <div class="header-blur-bar"></div>
-    </header>
 
     <!-- Main Profile Container -->
     <main class="profile-container">
@@ -57,34 +83,47 @@
                         <span class="info-value" id="name-value"></span>
                         <input type="text" class="info-input" id="name-input"  style="display: none;">
                     </div>
-
                     <div class="info-row">
                         <span class="info-label">Email:</span>
                         <span class="info-value" id="email-value"></span>
                         <input type="email" class="info-input" id="email-input" style="display: none;">
                     </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Senha:</span>
-                        <span class="info-value" id="password-value" style="display: none;"></span>
-                        <input type="password" class="info-input" id="password-input" placeholder="Nova senha" style="display: none;">
-                    </div>
-
                     <div class="info-row" id="current-password-row" style="display: none;">
                         <span class="info-label">Senha atual:</span>
                         <input type="password" class="info-input" id="current-password-input" placeholder="Digite sua senha atual" style="display: none;">
                     </div>
-
+                    <div class="info-row" id="new-password-row" style="display: none;">
+                        <span class="info-label">Nova senha:</span>
+                        <input type="password" class="info-input" id="password-input" placeholder="Nova senha" style="display: none;">
+                    </div>
                     <div class="info-row">
                         <span class="info-label">Telefone:</span>
                         <span class="info-value" id="phone-value"></span>
                         <input type="tel" class="info-input" id="phone-input" value="11987654321" style="display: none;">
                     </div>
-
-                    <div class="info-row">
-                        <span class="info-label">Documento:</span>
-                        <span class="info-value" id="document-value"></span>
+                    <!-- Campo de especialidades para designers -->
+                    <div class="info-row" id="specialties-row" style="display: none; flex-direction: column; align-items: flex-start;">
+                        <span class="info-label">Especialidades:</span>
+                        <div id="specialties-list"></div>
                     </div>
+                </div>
+
+                <!-- Área de portfólio para designers -->
+                <div id="portfolio-section" style="display:none;">
+                    <h2>Portfólio</h2>
+                    <ul id="portfolio-list"></ul>
+                    <form id="portfolio-upload-form">
+                        <input type="file" id="portfolio-files" name="portfolio_files[]" accept="image/*" multiple hidden>
+                        <button type="button" id="portfolio-upload-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Procurar arquivo
+                        </button>
+                        <span id="portfolio-upload-info">Nenhuma imagem selecionada</span>
+                        <button type="submit" class="upload-submit-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            Enviar
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Delete Account Button -->
@@ -118,6 +157,7 @@
     </div>
 
     <script src="assets/js/profile.js"></script>
+    <script src="assets/js/header.js"></script>
 </body>
 </html>
 
