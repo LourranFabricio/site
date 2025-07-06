@@ -1,6 +1,6 @@
 // Fecha o menu mobile ao redimensionar a janela para desktop
 window.addEventListener('resize', function() {
-    if (window.innerWidth >= 768 && isMobileMenuOpen) {
+    if (window.innerWidth >= 768 && window.isMobileMenuOpen) {
         toggleMobileMenu(); // Fecha o menu se for maior que 768px e estiver aberto
     }
 });
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Configurações do Intersection Observer para animações
-const observerOptions = {
+const indexObserverOptions = {
     threshold: 0.1, // Quando 10% do elemento estiver visível
     rootMargin: '0px 0px -50px 0px' // Margem de disparo da animação
 };
@@ -60,7 +60,7 @@ const observer = new IntersectionObserver(function(entries) {
             entry.target.style.transform = 'translateY(0)';
         }
     });
-}, observerOptions);
+}, indexObserverOptions);
 
 // Observa as seções da página para ativar a animação ao rolar
 document.addEventListener('DOMContentLoaded', function() {

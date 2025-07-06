@@ -20,7 +20,7 @@ $pdo = DB::getConnection();
 
 // Busca os dados específicos do designer logado
 // Seleciona campos relevantes para o perfil do designer
-$stmt = $pdo->prepare('SELECT id, name, email, bio, faixa_preco FROM Users WHERE id = ?');
+$stmt = $pdo->prepare('SELECT id, name, email, phone, bio FROM users WHERE id = ?');
 
 // Executa a consulta com o ID do designer logado
 $stmt->execute([$_SESSION['user']['id']]);

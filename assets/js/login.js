@@ -11,15 +11,23 @@ const signinBtn = document.getElementById('signin-btn');
 const signupBtn = document.getElementById('signup-btn');
 const rememberMeCheckbox = document.getElementById('remember-me');
 
+// Função para log no console (para debug)
+function log(message, data = null) {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ${message}`, data || '');
+}
+
 // Troca de formulários (login/cadastro)
 function showSignupForm() {
     signinForm.style.display = 'none';
     signupForm.style.display = 'block';
+    log('Switched to signup form');
 }
 
 function showSigninForm() {
     signupForm.style.display = 'none';
     signinForm.style.display = 'block';
+    log('Switched to signin form');
 }
 
 // Alternar visibilidade da senha com animação
@@ -110,44 +118,71 @@ function checkRememberMe() {
 }
 
 // Lógica de login (envio via fetch para signin.php)
-async function handleSignin(formData) {
-    try {
-        const response = await fetch('api/login.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: formData.email,
-                password: formData.password,
-                remember: formData.remember
+function handleSignin(formData) {
+    log('handleSignin chamado com:', formData);
+
+    // Mostra loading no botão
+    const originalText = signinBtn.textContent;
+    signinBtn.textContent = 'Entrando...';
+    signinBtn.disabled = true;
+
+    fetch('api/login.php', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        log('Response status:', response.status);
+        log('Response headers:', Object.fromEntries(response.headers.entries()));
+        
+        return response.json()
+            .then(result => {
+                log('Parsed JSON:', result);
+                
+                if (response.ok && result.success) {
+                    setRememberMe(formData.remember);
+                    log('Login successful, redirecting...');
+                    window.location.href = result.redirect || 'profile.html';
+                } else {
+                    log('Login failed:', result.error);
+                    alert(result.error || 'Erro ao fazer login. Verifique suas credenciais.');
+                }
             })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            // Salva preferência de "lembrar-me"
-            setRememberMe(formData.remember);
-
-            // Redireciona para dashboard ou página definida
-            window.location.href = result.redirect || 'profile.html';
-        } else {
-            alert(result.message || 'Erro ao fazer login. Verifique suas credenciais.');
-        }
-            } catch (error) {
-            // Log será feito no servidor
-            alert('Erro de conexão. Tente novamente.');
-        }
+            .catch(err => {
+                log('Erro ao converter JSON:', err);
+                alert('Erro inesperado no servidor. Tente novamente mais tarde.');
+            });
+    })
+    .catch(error => {
+        log('Fetch error:', error);
+        alert('Erro de conexão. Tente novamente.');
+    })
+    .finally(() => {
+        // Restaura o botão
+        signinBtn.textContent = originalText;
+        signinBtn.disabled = false;
+    });
 }
 
 // Lógica de cadastro (envio via fetch para api/register.php)
 async function handleSignup(formData) {
+    log('handleSignup chamado com:', formData);
+    
+    // Mostra loading no botão
+    const originalText = signupBtn.textContent;
+    signupBtn.textContent = 'Cadastrando...';
+    signupBtn.disabled = true;
+    
     try {
         const response = await fetch('api/register.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 name: formData.name,
@@ -159,7 +194,10 @@ async function handleSignup(formData) {
             })
         });
 
+        log('Registration response status:', response.status);
+        
         const result = await response.json();
+        log('Registration result:', result);
 
         if (result.success) {
             alert('Conta criada com sucesso! Faça login para continuar.');
@@ -168,11 +206,33 @@ async function handleSignup(formData) {
             // Preenche o campo de email do login com o email cadastrado
             document.getElementById('signin-email').value = formData.email;
         } else {
-            alert(result.message || 'Erro ao criar conta. Tente novamente.');
+            // Tratamento específico para diferentes tipos de erro
+            let errorMessage = result.error || 'Erro ao criar conta. Tente novamente.';
+            
+            // Mensagens específicas para erros conhecidos
+            if (result.error === 'E-mail já cadastrado') {
+                errorMessage = 'Este e-mail já está cadastrado. Use outro e-mail ou faça login.';
+            } else if (result.error === 'CPF ou CNPJ já cadastrado') {
+                errorMessage = 'Este CPF ou CNPJ já está cadastrado. Verifique os dados ou entre em contato conosco.';
+            } else if (result.error === 'CPF ou CNPJ inválido') {
+                errorMessage = 'CPF ou CNPJ inválido. Verifique se os dados estão corretos.';
+            } else if (result.error === 'Formato de e-mail inválido') {
+                errorMessage = 'Formato de e-mail inválido. Verifique se o e-mail está correto.';
+            } else if (result.error === 'A senha deve ter pelo menos 6 caracteres') {
+                errorMessage = 'A senha deve ter pelo menos 6 caracteres.';
+            } else if (result.error === 'Todos os campos são obrigatórios') {
+                errorMessage = 'Todos os campos são obrigatórios. Preencha todos os dados.';
+            }
+            
+            alert(errorMessage);
         }
     } catch (error) {
-        // Log será feito no servidor
+        log('Registration error:', error);
         alert('Erro de conexão. Tente novamente.');
+    } finally {
+        // Restaura o botão
+        signupBtn.textContent = originalText;
+        signupBtn.disabled = false;
     }
 }
 
@@ -197,13 +257,15 @@ async function deleteUser(userId) {
             alert(result.message || 'Erro ao deletar usuário.');
         }
     } catch (error) {
-        // Log será feito no servidor
+        log('Delete user error:', error);
         alert('Erro de conexão. Tente novamente.');
     }
 }
 
 // Eventos após o carregamento da página
 document.addEventListener('DOMContentLoaded', function() {
+    log('Login page loaded');
+    
     // Verifica se deve marcar "lembrar-me"
     checkRememberMe();
 
@@ -239,8 +301,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Envio do formulário de login
     signinBtn.addEventListener('click', function(e) {
         e.preventDefault();
-
-        const email = document.getElementById('signin-email').value;
+        log('Botão de login clicado');
+        
+        const email = document.getElementById('signin-email').value.trim();
         const password = document.getElementById('signin-password').value;
         const remember = document.getElementById('remember-me').checked;
 
@@ -271,13 +334,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Envio do formulário de cadastro
     signupBtn.addEventListener('click', function(e) {
         e.preventDefault();
+        log('Botão de cadastro clicado');
 
-        const name = document.getElementById('signup-name').value;
-        const email = document.getElementById('signup-email').value;
-        const cpf_cnpj = document.getElementById('signup-cpf').value;
+        const name = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const cpf_cnpj = document.getElementById('signup-cpf').value.trim();
         const password = document.getElementById('signup-password').value;
         const role = document.querySelector('input[name="role"]:checked').value;
-        const phone = document.getElementById('signup-phone').value;
+        const phone = document.getElementById('signup-phone').value.trim();
 
         // Validações
         if (!name || !email || !cpf_cnpj || !password) {
@@ -312,6 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
     rememberMeCheckbox.addEventListener('change', function() {
         setRememberMe(this.checked);
     });
+    
+    log('Login page event listeners attached');
 });
 
 // Torna funções disponíveis globalmente 

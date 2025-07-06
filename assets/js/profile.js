@@ -207,7 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('api/update-profile.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updateData)
+                body: JSON.stringify(updateData),
+                credentials: 'same-origin'
             });
             const result = await response.json();
 
@@ -351,7 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ password: password })
+                body: JSON.stringify({ password: password }),
+                credentials: 'same-origin'
             });
             const result = await response.json();
             return result;
@@ -383,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para buscar dados do usuário logado (universal)
     async function fetchProfileData() {
-        const res = await fetch('api/check-session.php');
+        const res = await fetch('api/check-session.php', { credentials: 'same-origin' });
         const session = await res.json();
         if (!session.success) {
             window.location.href = 'login.html';
@@ -422,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Função para carregar portfólio do designer
     async function loadPortfolio() {
         portfolioList.innerHTML = '<li>Carregando...</li>';
-        const res = await fetch('api/get-portfolio.php');
+        const res = await fetch('api/get-portfolio.php', { credentials: 'same-origin' });
         const data = await res.json();
         if (!data.success) {
             portfolioList.innerHTML = '<li>Erro ao carregar portfólio</li>';
@@ -443,14 +445,18 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Criar miniatura da imagem
             const thumbnail = document.createElement('img');
-            thumbnail.src = img.image_path;
+            thumbnail.src = img.filename;
             thumbnail.alt = 'Miniatura do portfólio';
             thumbnail.className = 'portfolio-thumbnail-img';
             
             // Criar nome do arquivo
             const fileName = document.createElement('span');
             fileName.className = 'portfolio-filename';
-            fileName.textContent = img.image_path.split('/').pop();
+            if (img.filename) {
+                fileName.textContent = img.filename.split('/').pop();
+            } else {
+                fileName.textContent = '';
+            }
             
             // Criar botão de exclusão
             const delBtn = document.createElement('button');
@@ -474,7 +480,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('api/delete-portfolio-image.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: imageId })
+            body: JSON.stringify({ id: imageId }),
+            credentials: 'same-origin'
         });
         const data = await res.json();
         if (data.success) {
@@ -514,7 +521,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const res = await fetch('api/upload-portfolio.php', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                credentials: 'same-origin'
             });
             const data = await res.json();
             if (data.success) {
@@ -529,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para buscar todas as especialidades
     async function fetchAllSpecialties() {
-        const res = await fetch('api/list-specialties.php');
+        const res = await fetch('api/list-specialties.php', { credentials: 'same-origin' });
         const data = await res.json();
         if (data.success) {
             allSpecialties = data.specialties;
@@ -538,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para buscar especialidades do designer
     async function fetchDesignerSpecialties() {
-        const res = await fetch('api/get-specialties.php');
+        const res = await fetch('api/get-specialties.php', { credentials: 'same-origin' });
         const data = await res.json();
         if (data.success) {
             selectedSpecialties = data.specialties.map(s => String(s.id));

@@ -1,5 +1,5 @@
 // Estado do menu mobile
-let isMobileMenuOpen = false;
+window.isMobileMenuOpen = false;
 
 // Verifica se a tela está em modo mobile (abaixo de 959px de largura)
 function isMobileScreen() {
@@ -34,7 +34,7 @@ function toggleMobileMenu() {
 }
 
 // Função para rolar suavemente até uma seção
-function scrollToSection(sectionId) {
+window.scrollToSection = function(sectionId) {
     const element = document.getElementById(sectionId);
     if (element) {
         element.scrollIntoView({ 
@@ -43,11 +43,10 @@ function scrollToSection(sectionId) {
         });
     }
 
-    // Fecha o menu mobile após o clique, se estiver aberto
-    if (isMobileMenuOpen && isMobileScreen()) {
+    if (window.isMobileMenuOpen && window.innerWidth <= 959) {
         toggleMobileMenu();
     }
-}
+};
 
 // Redimensiona tela para garantir o comportamento do menu
 window.addEventListener('resize', function() {

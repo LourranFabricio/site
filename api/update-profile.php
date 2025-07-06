@@ -34,16 +34,16 @@ try {
     // Se for designer e especialidades foram enviadas, processa dados completos
     if ($_SESSION['user']['role'] === 'designer' && is_array($specialties)) {
         // Atualiza dados básicos do usuário
-        $stmt = $pdo->prepare('UPDATE Users SET name = ?, email = ?, phone = ?, bio = ? WHERE id = ?');
+        $stmt = $pdo->prepare('UPDATE users SET name = ?, email = ?, phone = ?, bio = ? WHERE id = ?');
         $stmt->execute([$name, $email, $phone, $bio, $_SESSION['user']['id']]);
         
         // Remove especialidades antigas do designer
-        $stmt = $pdo->prepare('DELETE FROM DesignerSpecialties WHERE designer_id = ?');
+        $stmt = $pdo->prepare('DELETE FROM designer_specialties WHERE designer_id = ?');
         $stmt->execute([$_SESSION['user']['id']]);
         
         // Insere as novas especialidades selecionadas
         if (!empty($specialties)) {
-            $stmt = $pdo->prepare('INSERT INTO DesignerSpecialties (designer_id, specialty_id) VALUES (?, ?)');
+            $stmt = $pdo->prepare('INSERT INTO designer_specialties (designer_id, specialty_id) VALUES (?, ?)');
             foreach ($specialties as $specialty_id) {
                 $stmt->execute([$_SESSION['user']['id'], $specialty_id]);
             }
@@ -52,7 +52,7 @@ try {
         // Processa troca de senha se fornecida
         if ($currentPassword && $newPassword) {
             // Verifica se a senha atual está correta
-            $stmt = $pdo->prepare('SELECT password_hash FROM Users WHERE id = ?');
+            $stmt = $pdo->prepare('SELECT password_hash FROM users WHERE id = ?');
             $stmt->execute([$_SESSION['user']['id']]);
             $user = $stmt->fetch();
             
@@ -63,7 +63,7 @@ try {
             
             // Gera hash da nova senha e atualiza no banco
             $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare('UPDATE Users SET password_hash = ? WHERE id = ?');
+            $stmt = $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?');
             $stmt->execute([$newHash, $_SESSION['user']['id']]);
         }
         
@@ -75,7 +75,7 @@ try {
     // Se for cliente ou designer sem especialidades, processa apenas dados básicos e senha
     if ($currentPassword && $newPassword) {
         // Verifica se a senha atual está correta
-        $stmt = $pdo->prepare('SELECT password_hash FROM Users WHERE id = ?');
+        $stmt = $pdo->prepare('SELECT password_hash FROM users WHERE id = ?');
         $stmt->execute([$_SESSION['user']['id']]);
         $user = $stmt->fetch();
         
@@ -86,12 +86,12 @@ try {
         
         // Gera hash da nova senha e atualiza no banco
         $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('UPDATE Users SET password_hash = ? WHERE id = ?');
+        $stmt = $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?');
         $stmt->execute([$newHash, $_SESSION['user']['id']]);
     }
     
     // Atualiza dados básicos do usuário
-    $stmt = $pdo->prepare('UPDATE Users SET name = ?, email = ?, phone = ?, bio = ? WHERE id = ?');
+    $stmt = $pdo->prepare('UPDATE users SET name = ?, email = ?, phone = ?, bio = ? WHERE id = ?');
     $stmt->execute([$name, $email, $phone, $bio, $_SESSION['user']['id']]);
     
     // Retorna sucesso

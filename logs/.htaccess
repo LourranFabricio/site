@@ -1,0 +1,12 @@
+# Proteção específica para app.log no InfinityFree
+# Bloqueia acesso apenas ao arquivo app.log
+<Files "app.log">
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# Bloqueia listagem de diretório
+Options -Indexes
+
+# Redireciona tentativas de acesso para 404
+ErrorDocument 403 /404.html 

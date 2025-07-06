@@ -199,9 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Deixa a função acessível globalmente
     window.scrollToSection = scrollToSection;
 
-    // Inicializa verificação de login
-    checkAuthState();
-
     // Fecha o menu mobile ao clicar fora dele
     document.addEventListener('click', (e) => {
         if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {

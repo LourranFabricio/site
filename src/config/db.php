@@ -1,52 +1,92 @@
 <?php
-// Inclui o arquivo de configuração de ambiente
-require_once __DIR__ . '/env.php';
-class DB {
-    /** @var PDO|null Instância única da conexão (Singleton) */
-    private static $instance = null;
+// Inclui o sistema de logs se disponível
+if (file_exists(__DIR__ . '/logger.php')) {
+    require_once __DIR__ . '/logger.php';
+    Logger::init();
+}
 
-    /**
-     * Obtém a conexão com o banco de dados
-     * 
-     * Se a conexão não existir, cria uma nova usando as configurações
-     * do ambiente ou valores padrão para hospedagem gratuita.
-     * 
-     * @return PDO Conexão ativa com o banco de dados
-     * @throws Exception Se não conseguir conectar ao banco
-     */
+require_once __DIR__ . '/env.php';
+
+class DB {
+    private static $pdo = null;
+    
     public static function getConnection() {
-        // Verifica se já existe uma instância da conexão
-        if (self::$instance === null) {
-            // Obtém configurações do ambiente com fallbacks para hospedagem gratuita
-            $host = getenv('DB_HOST') ?: 'localhost';      // Host do banco
-            $dbname = getenv('DB_NAME') ?: 'brandge_db';   // Nome do banco
-            $user = getenv('DB_USER') ?: 'root';           // Usuário do banco
-            $pass = getenv('DB_PASS') ?: '';               // Senha do banco
-            
+        global $dbHost, $dbUser, $dbPass, $dbName;
+        
+        if (self::$pdo === null) {
             try {
-                // Cria a string de conexão DSN (Data Source Name)
-                $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
-                
-                // Cria a instância PDO com configurações de segurança
-                self::$instance = new PDO($dsn, $user, $pass, [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,        // Lança exceções em caso de erro
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,   // Retorna arrays associativos por padrão
-                    PDO::ATTR_EMULATE_PREPARES => false                 // Usa prepared statements nativos
+                $dsn = "mysql:host=$dbHost;dbname=$dbName;charset=utf8mb4";
+                self::$pdo = new PDO($dsn, $dbUser, $dbPass, [
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"
                 ]);
                 
-                // Log de sucesso para monitoramento
-                error_log("[DB] Conexão estabelecida com sucesso para $dbname em $host");
-                
+                if (class_exists('Logger')) {
+                    Logger::info('PDO connection established successfully');
+                }
             } catch (PDOException $e) {
-                // Log do erro para debug
-                error_log("[DB] Erro de conexão: " . $e->getMessage());
+                if (class_exists('Logger')) {
+                    Logger::error('PDO connection failed', [
+                        'error' => $e->getMessage(),
+                        'host' => $dbHost,
+                        'database' => $dbName
+                    ]);
+                }
                 
-                // Lança exceção genérica para não expor detalhes do banco
-                throw new Exception("Erro de conexão com o banco de dados");
+                header('Content-Type: application/json; charset=utf-8');
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Erro de conexão com o banco de dados']);
+                exit;
             }
         }
-        
-        // Retorna a instância da conexão
-        return self::$instance;
+        return self::$pdo;
     }
-} 
+}
+
+// Manter compatibilidade com código existente que usa $conn
+try {
+    $conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+    
+    // Configura charset para UTF-8
+    if (!$conn->set_charset("utf8mb4")) {
+        if (class_exists('Logger')) {
+            Logger::error('Failed to set charset to utf8mb4', ['error' => $conn->error]);
+        }
+    }
+    
+    // Exibir erro claro se falhar
+    if ($conn->connect_error) {
+        if (class_exists('Logger')) {
+            Logger::error('MySQLi connection failed', [
+                'error' => $conn->connect_error,
+                'host' => $dbHost,
+                'database' => $dbName
+            ]);
+        }
+        
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Erro de conexão com o banco de dados']);
+        exit;
+    }
+    
+    if (class_exists('Logger')) {
+        Logger::info('MySQLi connection established successfully');
+    }
+    
+} catch (Exception $e) {
+    if (class_exists('Logger')) {
+        Logger::error('Exception during MySQLi connection', [
+            'error' => $e->getMessage(),
+            'host' => $dbHost,
+            'database' => $dbName
+        ]);
+    }
+    
+    header('Content-Type: application/json; charset=utf-8');
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Erro de configuração do banco de dados']);
+    exit;
+}

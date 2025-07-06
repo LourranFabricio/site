@@ -5,25 +5,11 @@
 }
 
 body {
-    font-family: 'Haas Neue', sans-serif;
+    font-family: sans-serif;
     line-height: 1.6;
     color: #181818;
     min-height: 100vh;
     background-color: #f8f8f8;
-}
-
-@font-face {
-    font-family: 'Haas';
-    src: url('assets/fonts/NHaasGroteskDSPro-25Th.otf') format('truetype');
-    font-size: normal;
-    font-size: normal;
-}
-
-@font-face {
-    font-family: 'Haas 65';
-    src: url('NHaasGroteskTXPro-65Md.ttf') format('truetype');
-    font-size: normal;
-    font-size: normal;
 }
 
 /* Header Styles */
