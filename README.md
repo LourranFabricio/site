@@ -85,10 +85,9 @@ Armazena dados dos usuários (clientes e designers).
 - **cpf_cnpj**: CPF ou CNPJ
 - **role**: 'cliente' ou 'designer'
 - **phone**: Telefone
-- **profile_picture**: Caminho da foto de perfil (opcional)
 - **created_at**: Data de criação
 - **bio**: Biografia do usuário
-- **faixa_preco**: Faixa de preço (opcional)
+
 
 ### specialties
 Lista de especialidades de design.
