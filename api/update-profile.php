@@ -1,4 +1,7 @@
 <?php
+ob_start();
+ini_set('display_errors', 0);
+error_reporting(0);
 
 // Inicia a sessão PHP
 session_start();
@@ -7,10 +10,11 @@ session_start();
 require_once __DIR__ . '/../src/config/db.php';
 
 // Define o tipo de resposta como JSON
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 // Verifica se o usuário está autenticado
 if (!isset($_SESSION['user'])) {
+    ob_clean();
     echo json_encode(['success' => false, 'message' => 'Acesso negado.']);
     exit;
 }
@@ -57,6 +61,7 @@ try {
             $user = $stmt->fetch();
             
             if (!$user || !password_verify($currentPassword, $user['password_hash'])) {
+                ob_clean();
                 echo json_encode(['success' => false, 'message' => 'Senha atual incorreta.']);
                 exit;
             }
@@ -68,6 +73,7 @@ try {
         }
         
         // Retorna sucesso para designer com especialidades
+        ob_clean();
         echo json_encode(['success' => true, 'message' => 'Perfil atualizado com sucesso!']);
         exit;
     }
@@ -80,6 +86,7 @@ try {
         $user = $stmt->fetch();
         
         if (!$user || !password_verify($currentPassword, $user['password_hash'])) {
+            ob_clean();
             echo json_encode(['success' => false, 'message' => 'Senha atual incorreta.']);
             exit;
         }
@@ -95,9 +102,12 @@ try {
     $stmt->execute([$name, $email, $phone, $bio, $_SESSION['user']['id']]);
     
     // Retorna sucesso
+    ob_clean();
     echo json_encode(['success' => true, 'message' => 'Perfil atualizado com sucesso!']);
     
-} catch (Exception $e) {
-    // Retorna erro em caso de exceção
+} catch (Throwable $e) {
+    http_response_code(500);
+    ob_clean();
     echo json_encode(['success' => false, 'message' => 'Erro ao atualizar perfil: ' . $e->getMessage()]);
+    exit;
 } 

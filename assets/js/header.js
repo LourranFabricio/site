@@ -138,8 +138,8 @@ window.setLoginState = function(state) {
 
 document.addEventListener('DOMContentLoaded', function() {
     fetch('api/check-session.php', { credentials: 'include' })
-        .then(res => res.json())
-        .then(data => {
+        .then(async res => {
+            const data = await safeJsonResponse(res);
             if (data.logged_in) {
                 window.isLoggedIn = true;
                 localStorage.setItem('brandge_user_role', data.role);
@@ -160,3 +160,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Ao fazer login, salve o papel do usuário:
 // localStorage.setItem('brandge_user_role', 'designer'); // ou 'cliente'
+
+// Função utilitária para parsing seguro de JSON
+async function safeJsonResponse(response) {
+    const text = await response.text();
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        alert('Erro inesperado do servidor. Tente atualizar a página.');
+        console.error('Resposta não-JSON recebida:', text);
+        return { success: false, error: 'Resposta inválida do servidor' };
+    }
+}

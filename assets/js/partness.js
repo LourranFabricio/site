@@ -17,11 +17,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Índice atual do carrossel para cada designer
     const carouselIndexes = {};
 
+    // Função utilitária para parsing seguro de JSON
+    async function safeJsonResponse(response) {
+        const text = await response.text();
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            alert('Erro inesperado do servidor. Tente atualizar a página.');
+            console.error('Resposta não-JSON recebida:', text);
+            return { success: false, error: 'Resposta inválida do servidor' };
+        }
+    }
+
     // Função para buscar designers do backend
     async function fetchDesigners() {
         try {
             const res = await fetch('api/list-designers.php');
-            const data = await res.json();
+            const data = await safeJsonResponse(res);
             if (data.success) {
                 designers = data.designers.filter(d => d.portfolio && d.portfolio.length > 0);
                 filteredDesigners = designers;

@@ -7,17 +7,13 @@ require_once __DIR__ . '/../src/config/db.php';
 header('Content-Type: application/json');
 
 // Obtém conexão com o banco de dados
-try {
-    $pdo = DB::getConnection();
-    $stmt = $pdo->query('SELECT id, name FROM specialties');
-    $specialties = $stmt->fetchAll();
-    echo json_encode(['success' => true, 'specialties' => $specialties]);
-} catch (Throwable $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'error' => 'Erro inesperado ao listar especialidades',
-        'details' => $e->getMessage()
-    ]);
-    exit;
-} 
+$pdo = DB::getConnection();
+
+// Busca todas as especialidades cadastradas na tabela specialties
+$stmt = $pdo->query('SELECT id, name FROM specialties');
+
+// Obtém todos os resultados como array associativo
+$specialties = $stmt->fetchAll();
+
+// Retorna a lista de especialidades para o cliente
+echo json_encode(['success' => true, 'specialties' => $specialties]); 

@@ -1,13 +1,13 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+ob_start();
+ini_set('display_errors', 0);
+error_reporting(0);
 
 // Inclui a configuração do banco de dados
 require_once __DIR__ . '/../src/config/db.php';
 
 // Define o tipo de resposta como JSON
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 try {
     // Obtém conexão com o banco de dados
@@ -50,9 +50,11 @@ try {
     unset($designer);
 
     // Retorna a lista completa de designers com seus dados
+    ob_clean();
     echo json_encode(['success' => true, 'designers' => $designers]);
 } catch (Throwable $e) {
     http_response_code(500);
+    ob_clean();
     echo json_encode([
         'success' => false,
         'error' => 'Erro ao buscar designers',

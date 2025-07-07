@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(updateData),
                 credentials: 'same-origin'
             });
-            const result = await response.json();
+            const result = await safeJsonResponse(response);
 
             if (result.success) {
                 // Atualiza interface
@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ password: password }),
                 credentials: 'same-origin'
             });
-            const result = await response.json();
+            const result = await safeJsonResponse(response);
             return result;
         } catch (error) {
             console.error('Erro ao excluir conta:', error);
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Função para buscar dados do usuário logado (universal)
     async function fetchProfileData() {
         const res = await fetch('api/check-session.php', { credentials: 'same-origin' });
-        const session = await res.json();
+        const session = await safeJsonResponse(res);
         if (!session.success) {
             window.location.href = 'login.html';
             return;
@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadPortfolio() {
         portfolioList.innerHTML = '<li>Carregando...</li>';
         const res = await fetch('api/get-portfolio.php', { credentials: 'same-origin' });
-        const data = await res.json();
+        const data = await safeJsonResponse(res);
         if (!data.success) {
             portfolioList.innerHTML = '<li>Erro ao carregar portfólio</li>';
             return;
@@ -483,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify({ id: imageId }),
             credentials: 'same-origin'
         });
-        const data = await res.json();
+        const data = await safeJsonResponse(res);
         if (data.success) {
             loadPortfolio();
         } else {
@@ -524,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: formData,
                 credentials: 'same-origin'
             });
-            const data = await res.json();
+            const data = await safeJsonResponse(res);
             if (data.success) {
                 portfolioFilesInput.value = '';
                 portfolioUploadInfo.textContent = 'Nenhuma imagem selecionada';
@@ -538,7 +538,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Função para buscar todas as especialidades
     async function fetchAllSpecialties() {
         const res = await fetch('api/list-specialties.php', { credentials: 'same-origin' });
-        const data = await res.json();
+        const data = await safeJsonResponse(res);
         if (data.success) {
             allSpecialties = data.specialties;
         }
@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Função para buscar especialidades do designer
     async function fetchDesignerSpecialties() {
         const res = await fetch('api/get-specialties.php', { credentials: 'same-origin' });
-        const data = await res.json();
+        const data = await safeJsonResponse(res);
         if (data.success) {
             selectedSpecialties = data.specialties.map(s => String(s.id));
         }
@@ -574,6 +574,18 @@ document.addEventListener('DOMContentLoaded', () => {
             label.appendChild(document.createTextNode(' ' + spec.name));
             specialtiesList.appendChild(label);
         });
+    }
+
+    // Função utilitária para parsing seguro de JSON
+    async function safeJsonResponse(response) {
+        const text = await response.text();
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            alert('Erro inesperado do servidor. Tente atualizar a página.');
+            console.error('Resposta não-JSON recebida:', text);
+            return { success: false, error: 'Resposta inválida do servidor' };
+        }
     }
 
     // Substituir chamada de inicialização para usar fetchProfileData

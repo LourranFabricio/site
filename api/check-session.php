@@ -1,7 +1,7 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+ob_start();
+ini_set('display_errors', 0);
+error_reporting(0);
 
 // Inicia a sessão PHP
 if (session_status() === PHP_SESSION_NONE) {
@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Define o tipo de resposta como JSON
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 try {
     // Verifica se existe uma sessão de usuário ativa
@@ -32,6 +32,7 @@ try {
         
         // Verifica se o usuário foi encontrado no banco
         if ($user) {
+            ob_clean();
             // Usuário encontrado - retorna dados da sessão
             echo json_encode([
                 'success' => true,           // Operação bem-sucedida
@@ -40,15 +41,18 @@ try {
                 'user' => $user              // Dados completos do usuário
             ]);
         } else {
+            ob_clean();
             // Usuário não encontrado no banco (sessão inválida)
             echo json_encode(['success' => false, 'message' => 'Usuário não encontrado']);
         }
     } else {
+        ob_clean();
         // Não há sessão ativa - usuário não está logado
         echo json_encode(['success' => false, 'message' => 'Não logado']);
     }
 } catch (Throwable $e) {
     http_response_code(500);
+    ob_clean();
     echo json_encode(['success' => false, 'message' => 'Erro interno: ' . $e->getMessage()]);
     exit;
 } 

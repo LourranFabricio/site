@@ -117,6 +117,18 @@ function checkRememberMe() {
     }
 }
 
+// Função utilitária para parsing seguro de JSON
+async function safeJsonResponse(response) {
+    const text = await response.text();
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        alert('Erro inesperado do servidor. Tente atualizar a página.');
+        console.error('Resposta não-JSON recebida:', text);
+        return { success: false, error: 'Resposta inválida do servidor' };
+    }
+}
+
 // Lógica de login (envio via fetch para signin.php)
 function handleSignin(formData) {
     log('handleSignin chamado com:', formData);
@@ -135,27 +147,21 @@ function handleSignin(formData) {
         credentials: 'include',
         body: JSON.stringify(formData)
     })
-    .then(response => {
+    .then(async response => {
         log('Response status:', response.status);
         log('Response headers:', Object.fromEntries(response.headers.entries()));
         
-        return response.json()
-            .then(result => {
-                log('Parsed JSON:', result);
-                
-                if (response.ok && result.success) {
-                    setRememberMe(formData.remember);
-                    log('Login successful, redirecting...');
-                    window.location.href = result.redirect || 'profile.html';
-                } else {
-                    log('Login failed:', result.error);
-                    alert(result.error || 'Erro ao fazer login. Verifique suas credenciais.');
-                }
-            })
-            .catch(err => {
-                log('Erro ao converter JSON:', err);
-                alert('Erro inesperado no servidor. Tente novamente mais tarde.');
-            });
+        const result = await safeJsonResponse(response);
+        log('Parsed JSON:', result);
+        
+        if (response.ok && result.success) {
+            setRememberMe(formData.remember);
+            log('Login successful, redirecting...');
+            window.location.href = result.redirect || 'profile.html';
+        } else {
+            log('Login failed:', result.error);
+            alert(result.error || 'Erro ao fazer login. Verifique suas credenciais.');
+        }
     })
     .catch(error => {
         log('Fetch error:', error);
@@ -196,7 +202,7 @@ async function handleSignup(formData) {
 
         log('Registration response status:', response.status);
         
-        const result = await response.json();
+        const result = await safeJsonResponse(response);
         log('Registration result:', result);
 
         if (result.success) {
@@ -249,7 +255,7 @@ async function deleteUser(userId) {
             })
         });
 
-        const result = await response.json();
+        const result = await safeJsonResponse(response);
 
         if (result.success) {
             alert('Usuário deletado com sucesso.');

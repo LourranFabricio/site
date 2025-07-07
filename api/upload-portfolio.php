@@ -31,7 +31,7 @@ try {
     $pdo = DB::getConnection();
 
     // Configurações de upload compatíveis com hospedagem gratuita
-    $uploadDir = __DIR__ . '/../assets/img/'; // Agora salva em assets/img
+    $uploadDir = __DIR__ . '/../assets/img/portfolio/'; // Agora salva em assets/img/portfolio
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']; // Tipos MIME permitidos
     $maxSize = getenv('UPLOAD_MAX_SIZE') ?: 5 * 1024 * 1024;              // Tamanho máximo (5MB padrão)
 
@@ -102,7 +102,7 @@ try {
         // Move o arquivo temporário para o diretório final
         if (move_uploaded_file($tmp_name, $filepath)) {
             // Arquivo movido com sucesso
-            $uploadedFiles[] = 'assets/img/' . $filename;
+            $uploadedFiles[] = 'assets/img/portfolio/' . $filename;
             Logger::info('Arquivo enviado com sucesso', ['file' => $filename, 'user_id' => $_SESSION['user']['id']]);
         } else {
             // Erro ao mover o arquivo
